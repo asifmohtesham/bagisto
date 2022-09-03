@@ -7,6 +7,7 @@ use Webkul\Velocity\Contracts\Content as ContentContract;
 
 class Content extends TranslatableModel implements ContentContract
 {
+    
     protected $table = 'velocity_contents';
 
     public $translatedAttributes = [

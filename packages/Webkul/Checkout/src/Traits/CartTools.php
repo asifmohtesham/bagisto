@@ -12,23 +12,6 @@ namespace Webkul\Checkout\Traits;
 trait CartTools
 {
     /**
-     * Remove cart and destroy the session
-     *
-     * @param  \Webkul\Checkout\Contracts\Cart  $cart
-     * @return void
-     */
-    public function removeCart($cart)
-    {
-        $this->cartRepository->delete($cart->id);
-
-        if (session()->has('cart')) {
-            session()->forget('cart');
-        }
-
-        $this->resetCart();
-    }
-
-    /**
      * Save cart for guest.
      *
      * @param  \Webkul\Checkout\Contracts\Cart  $cart
@@ -37,10 +20,7 @@ trait CartTools
     public function putCart($cart)
     {
         if (! auth()->guard()->check()) {
-            $cartTemp = new \stdClass();
-            $cartTemp->id = $cart->id;
-
-            session()->put('cart', $cartTemp);
+            session()->put('cart', $cart);
         }
     }
 
@@ -57,9 +37,7 @@ trait CartTools
                 'is_active'   => 1,
             ]);
 
-            $this->setCart($cart);
-
-            $guestCart = $this->cartRepository->find(session()->get('cart')->id);
+            $guestCart = session()->get('cart');
 
             /**
              * When the logged in customer is not having any of the cart instance previously and are active.
@@ -80,7 +58,7 @@ trait CartTools
 
             foreach ($guestCart->items as $guestCartItem) {
                 try {
-                    $cart = $this->addProduct($guestCartItem->product_id, $guestCartItem->additional);
+                    $this->addProduct($guestCartItem->product_id, $guestCartItem->additional);
                 } catch (\Exception $e) {
                     //Ignore exception
                 }
@@ -88,7 +66,9 @@ trait CartTools
 
             $this->collectTotals();
 
-            $this->removeCart($guestCart);
+            $this->cartRepository->delete($guestCart->id);
+
+            session()->forget('cart');
         }
     }
 
@@ -160,9 +140,7 @@ trait CartTools
     public function deActivateCart(): void
     {
         if ($cart = $this->getCart()) {
-            $cart = $this->cartRepository->update(['is_active' => false], $cart->id);
-
-            $this->resetCart();
+            $this->cartRepository->update(['is_active' => false], $cart->id);
 
             if (session()->has('cart')) {
                 session()->forget('cart');
@@ -196,10 +174,7 @@ trait CartTools
         }
 
         if (! $wishlistItem->additional) {
-            $wishlistItem->additional = [
-                'product_id' => $wishlistItem->product_id,
-                'quantity'   => 1,
-            ];
+            $wishlistItem->additional = ['product_id' => $wishlistItem->product_id, 'quantity' => 1];
         }
 
         request()->merge($wishlistItem->additional);

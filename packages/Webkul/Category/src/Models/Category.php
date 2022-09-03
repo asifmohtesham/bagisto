@@ -135,11 +135,13 @@ class Category extends TranslatableModel implements CategoryContract
                     'parent_id',
                     '=',
                     null,
-                ], [
+                ],
+                [
                     '_lft',
                     '<=',
                     $this->_lft,
-                ], [
+                ],
+                [
                     '_rgt',
                     '>=',
                     $this->_rgt,
@@ -161,7 +163,6 @@ class Category extends TranslatableModel implements CategoryContract
 
         while (isset($category->parent)) {
             $category = $category->parent;
-            
             $categories[] = $category;
         }
 

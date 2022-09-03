@@ -72,27 +72,14 @@ class CustomerController extends Controller
 
         $data = $customerProfileRequest->validated();
 
-        if (
-            isset($data['date_of_birth'])
-            && $data['date_of_birth'] == ''
-        ) {
+        if (isset($data['date_of_birth']) && $data['date_of_birth'] == '') {
             unset($data['date_of_birth']);
         }
 
-        if (
-            core()->getCurrentChannel()->theme === 'default'
-            && ! isset($data['image'])
-        ) {
-            $data['image']['image_0'] = '';
-        }
-
-        $data['subscribed_to_news_letter'] = isset($data['subscribed_to_news_letter']);
+        $data['subscribed_to_news_letter'] = isset($data['subscribed_to_news_letter']) ? 1 : 0;
 
         if (isset($data['oldpassword'])) {
-            if (
-                $data['oldpassword'] != ''
-                || $data['oldpassword'] != null
-            ) {
+            if ($data['oldpassword'] != '' || $data['oldpassword'] != null) {
                 if (Hash::check($data['oldpassword'], auth()->guard('customer')->user()->password)) {
                     $isPasswordChanged = true;
 

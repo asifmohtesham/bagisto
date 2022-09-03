@@ -395,7 +395,7 @@ export default {
                 number: {
                     isSelected: false,
                     condition: null,
-                    value: null
+                    value: 0
                 },
 
                 boolean: {
@@ -514,10 +514,6 @@ export default {
         },
 
         getResponse: function() {
-            if (this.type == null) {
-                alert(this.translations.emptyField);
-            }
-
             let label = '';
 
             for (let colIndex in this.columns) {
@@ -531,18 +527,12 @@ export default {
                 case 'string': {
                     if (this.types.string.value !== null) {
                         this.emitOnFilterEvent('string', label, true);
-                    } else {
-                        alert(this.translations.emptyValue);
                     }
                     break;
                 }
 
                 case 'number': {
                     let indexConditions = true;
-
-                    if (! this.types.number.value) {
-                        this.switchSelectCondition('number');
-                    }
 
                     if (
                         this.filterIndex === this.columnOrAlias &&

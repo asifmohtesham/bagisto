@@ -12,8 +12,6 @@ return [
         'remove-all-success' => 'Se han eliminado todos los elementos de su lista de deseos',
     ],
 
-    'product-removed'  => 'El producto ya no está disponible porque lo eliminó el administrador',
-
     'reviews' => [
         'empty' => 'Aún no has calificado ningún producto',
     ],

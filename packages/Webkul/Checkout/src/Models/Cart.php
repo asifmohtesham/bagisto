@@ -20,13 +20,18 @@ class Cart extends Model implements CartContract
         'updated_at',
     ];
 
+    protected $with = [
+        'items',
+        'items.children',
+    ];
+
     /**
      * To get relevant associated items with the cart instance
      */
     public function items(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(CartItemProxy::modelClass())
-            ->whereNull('parent_id');
+                    ->whereNull('parent_id');
     }
 
     /**
@@ -51,7 +56,7 @@ class Cart extends Model implements CartContract
     public function billing_address(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->addresses()
-            ->where('address_type', CartAddress::ADDRESS_TYPE_BILLING);
+                    ->where('address_type', CartAddress::ADDRESS_TYPE_BILLING);
     }
 
     /**
@@ -59,7 +64,8 @@ class Cart extends Model implements CartContract
      */
     public function getBillingAddressAttribute()
     {
-        return $this->billing_address()->first();
+        return $this->billing_address()
+                    ->first();
     }
 
     /**
@@ -68,7 +74,7 @@ class Cart extends Model implements CartContract
     public function shipping_address(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->addresses()
-            ->where('address_type', CartAddress::ADDRESS_TYPE_SHIPPING);
+                    ->where('address_type', CartAddress::ADDRESS_TYPE_SHIPPING);
     }
 
     /**
@@ -76,7 +82,8 @@ class Cart extends Model implements CartContract
      */
     public function getShippingAddressAttribute()
     {
-        return $this->shipping_address()->first();
+        return $this->shipping_address()
+                    ->first();
     }
 
     /**
@@ -93,7 +100,7 @@ class Cart extends Model implements CartContract
     public function selected_shipping_rate(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
     {
         return $this->shipping_rates()
-            ->where('method', $this->shipping_method);
+                    ->where('method', $this->shipping_method);
     }
 
     /**
@@ -102,8 +109,8 @@ class Cart extends Model implements CartContract
     public function getSelectedShippingRateAttribute()
     {
         return $this->selected_shipping_rate()
-            ->where('method', $this->shipping_method)
-            ->first();
+                    ->where('method', $this->shipping_method)
+                    ->first();
     }
 
     /**
@@ -155,11 +162,11 @@ class Cart extends Model implements CartContract
     public function hasProductsWithQuantityBox(): bool
     {
         foreach ($this->items as $item) {
-            if ($item->product->getTypeInstance()->showQuantityBox()) {
+            if ($item->product->getTypeInstance()
+                              ->showQuantityBox() === true) {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -171,7 +178,7 @@ class Cart extends Model implements CartContract
     public function hasGuestCheckoutItems(): bool
     {
         foreach ($this->items as $item) {
-            if (! $item->product->getAttribute('guest_checkout')) {
+            if ($item->product->getAttribute('guest_checkout') === 0) {
                 return false;
             }
         }

@@ -11,7 +11,6 @@ use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Core\Contracts\Validations\Slug;
 use Webkul\Inventory\Repositories\InventorySourceRepository;
 use Webkul\Product\Helpers\ProductType;
-use Webkul\Product\Http\Requests\InventoryRequest;
 use Webkul\Product\Http\Requests\ProductForm;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductAttributeValueRepository;
@@ -118,11 +117,7 @@ class ProductController extends Controller
             'sku'                 => ['required', 'unique:products,sku', new Slug],
         ]);
 
-        Event::dispatch('catalog.product.create.before');
-
         $product = $this->productRepository->create(request()->all());
-
-        Event::dispatch('catalog.product.create.after', $product);
 
         session()->flash('success', trans('admin::app.response.create-success', ['name' => 'Product']));
 
@@ -155,11 +150,33 @@ class ProductController extends Controller
      */
     public function update(ProductForm $request, $id)
     {
-        Event::dispatch('catalog.product.update.before', $id);
+        $data = request()->all();
 
-        $product = $this->productRepository->update(request()->all(), $id);
+        $multiselectAttributeCodes = [];
 
-        Event::dispatch('catalog.product.update.after', $product);
+        $productAttributes = $this->productRepository->findOrFail($id);
+
+        foreach ($productAttributes->attribute_family->attribute_groups as $attributeGroup) {
+            $customAttributes = $productAttributes->getEditableAttributes($attributeGroup);
+
+            if (count($customAttributes)) {
+                foreach ($customAttributes as $attribute) {
+                    if ($attribute->type == 'multiselect' || $attribute->type == 'checkbox') {
+                        array_push($multiselectAttributeCodes, $attribute->code);
+                    }
+                }
+            }
+        }
+
+        if (count($multiselectAttributeCodes)) {
+            foreach ($multiselectAttributeCodes as $multiselectAttributeCode) {
+                if (! isset($data[$multiselectAttributeCode])) {
+                    $data[$multiselectAttributeCode] = [];
+                }
+            }
+        }
+
+        $this->productRepository->update($data, $id);
 
         session()->flash('success', trans('admin::app.response.update-success', ['name' => 'Product']));
 
@@ -172,7 +189,7 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function updateInventories(InventoryRequest $inventoryRequest, $id)
+    public function updateInventories($id)
     {
         $product = $this->productRepository->findOrFail($id);
 
@@ -229,10 +246,7 @@ class ProductController extends Controller
 
         $copiedProduct = $this->productRepository->copy($originalProduct);
 
-        if (
-            $copiedProduct instanceof Product
-            && $copiedProduct->id
-        ) {
+        if ($copiedProduct instanceof Product && $copiedProduct->id) {
             session()->flash('success', trans('admin::app.response.product-copied'));
         } else {
             session()->flash('error', trans('admin::app.response.error-while-copying'));
@@ -265,11 +279,7 @@ class ProductController extends Controller
         $product = $this->productRepository->findOrFail($id);
 
         try {
-            Event::dispatch('catalog.product.delete.before', $id);
-
             $this->productRepository->delete($id);
-
-            Event::dispatch('catalog.product.delete.after', $id);
 
             return response()->json([
                 'message' => trans('admin::app.response.delete-success', ['name' => 'Product']),
@@ -296,11 +306,7 @@ class ProductController extends Controller
             $product = $this->productRepository->find($productId);
 
             if (isset($product)) {
-                Event::dispatch('catalog.product.delete.before', $productId);
-
                 $this->productRepository->delete($productId);
-
-                Event::dispatch('catalog.product.delete.after', $productId);
             }
         }
 
@@ -329,15 +335,11 @@ class ProductController extends Controller
         $productIds = explode(',', $data['indexes']);
 
         foreach ($productIds as $productId) {
-            Event::dispatch('catalog.product.update.before', $productId);
-
-            $product = $this->productRepository->update([
+            $this->productRepository->update([
                 'channel' => null,
                 'locale'  => null,
                 'status'  => $data['update-options'],
             ], $productId);
-
-            Event::dispatch('catalog.product.update.after', $product);
         }
 
         session()->flash('success', trans('admin::app.catalog.products.mass-update-success'));

@@ -90,7 +90,7 @@
 
                     onError: function (error) {
                         if (! options.authorizationFailed) {
-                            options.alertBox(messages.universalError);
+                            options.alertBox(error);
                         }
                     }
                 };

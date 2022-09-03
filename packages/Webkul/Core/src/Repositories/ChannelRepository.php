@@ -14,11 +14,11 @@ class ChannelRepository extends Repository
     /**
      * Specify model class name.
      *
-     * @return string
+     * @return mixed
      */
-    public function model(): string
+    public function model()
     {
-        return 'Webkul\Core\Contracts\Channel';
+        return \Webkul\Core\Contracts\Channel::class;
     }
 
     /**
@@ -69,6 +69,8 @@ class ChannelRepository extends Repository
     public function update(array $data, $id, $attribute = 'id')
     {
         Event::dispatch('core.channel.update.before', $id);
+
+        $channel = $this->find($id);
 
         $channel = parent::update($data, $id, $attribute);
 

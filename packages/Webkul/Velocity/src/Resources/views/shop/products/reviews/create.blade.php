@@ -47,10 +47,7 @@
                             <span :class="`control-error ${errors.has('title') ? '' : 'hide'}`" v-text="errors.first('title')"></span>
                         </div>
 
-                        @if (
-                            core()->getConfigData('catalog.products.review.guest_review')
-                            && ! auth()->guard('customer')->user()
-                        )
+                        @if (core()->getConfigData('catalog.products.review.guest_review') && ! auth()->guard('customer')->user())
                             <div :class="`${errors.has('name') ? 'has-error' : ''}`">
                                 <label for="title" class="required">
                                     {{ __('shop::app.reviews.name') }}

@@ -20,7 +20,9 @@ class ExportController extends Controller
 
         $gridName = explode('\\', $criteria['gridName']);
 
-        $gridInstance = app('\Webkul\Admin\DataGrids' . '\\' . last($gridName));
+        $path = '\Webkul\Admin\DataGrids' . '\\' . last($gridName);
+
+        $gridInstance = app($path);
 
         $records = $gridInstance->export();
 
@@ -32,7 +34,9 @@ class ExportController extends Controller
 
         if ($format == 'csv') {
             return Excel::download(new DataGridExport($records), last($gridName) . '.csv');
-        } elseif ($format == 'xls') {
+        }
+
+        if ($format == 'xls') {
             return Excel::download(new DataGridExport($records), last($gridName) . '.xlsx');
         }
 

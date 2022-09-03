@@ -2,7 +2,6 @@
 
 namespace Webkul\Attribute\Http\Controllers;
 
-use Illuminate\Support\Facades\Event;
 use Webkul\Admin\DataGrids\AttributeFamilyDataGrid;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
@@ -54,9 +53,9 @@ class AttributeFamilyController extends Controller
     {
         $attributeFamily = $this->attributeFamilyRepository->with(['attribute_groups.custom_attributes'])->findOneByField('code', 'default');
 
-        $customAttributes = $this->attributeRepository->all(['id', 'code', 'admin_name', 'type']);
+        $custom_attributes = $this->attributeRepository->all(['id', 'code', 'admin_name', 'type']);
 
-        return view($this->_config['view'], compact('attributeFamily', 'customAttributes'));
+        return view($this->_config['view'], compact('custom_attributes', 'attributeFamily'));
     }
 
     /**
@@ -71,11 +70,7 @@ class AttributeFamilyController extends Controller
             'name' => 'required',
         ]);
 
-        Event::dispatch('catalog.attribute_family.create.before');
-
         $attributeFamily = $this->attributeFamilyRepository->create(request()->all());
-
-        Event::dispatch('catalog.attribute_family.create.after', $attributeFamily);
 
         session()->flash('success', trans('admin::app.response.create-success', ['name' => 'Family']));
 
@@ -92,9 +87,9 @@ class AttributeFamilyController extends Controller
     {
         $attributeFamily = $this->attributeFamilyRepository->with(['attribute_groups.custom_attributes'])->findOrFail($id, ['*']);
 
-        $customAttributes = $this->attributeRepository->all(['id', 'code', 'admin_name', 'type']);
+        $custom_attributes = $this->attributeRepository->all(['id', 'code', 'admin_name', 'type']);
 
-        return view($this->_config['view'], compact('attributeFamily', 'customAttributes'));
+        return view($this->_config['view'], compact('attributeFamily', 'custom_attributes'));
     }
 
     /**
@@ -110,11 +105,7 @@ class AttributeFamilyController extends Controller
             'name' => 'required',
         ]);
 
-        Event::dispatch('catalog.attribute_family.update.before', $id);
-
         $attributeFamily = $this->attributeFamilyRepository->update(request()->all(), $id);
-
-        Event::dispatch('catalog.attribute_family.update.after', $attributeFamily);
 
         session()->flash('success', trans('admin::app.response.update-success', ['name' => 'Family']));
 
@@ -144,11 +135,7 @@ class AttributeFamilyController extends Controller
         }
 
         try {
-            Event::dispatch('catalog.attribute_family.delete.before', $id);
-
             $this->attributeFamilyRepository->delete($id);
-
-            Event::dispatch('catalog.attribute_family.delete.after', $id);
 
             return response()->json([
                 'message' => trans('admin::app.response.delete-success', ['name' => 'Family']),
@@ -174,13 +161,9 @@ class AttributeFamilyController extends Controller
         if (request()->isMethod('delete')) {
             $indexes = explode(',', request()->input('indexes'));
 
-            foreach ($indexes as $index) {
+            foreach ($indexes as $key => $value) {
                 try {
-                    Event::dispatch('catalog.attribute_family.delete.before', $index);
-
-                    $this->attributeFamilyRepository->delete($index);
-
-                    Event::dispatch('catalog.attribute_family.delete.after', $index);
+                    $this->attributeFamilyRepository->delete($value);
                 } catch (\Exception $e) {
                     report($e);
                     $suppressFlash = true;

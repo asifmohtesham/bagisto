@@ -204,7 +204,7 @@ class CartCest
             $data['booking'] = ['qty' => [$bookingTicket1->id => 1]];
         }
 
-        $I->comment('A guest is adding a first product of type ' . $product1->type . ' with id ' . $product1->id . ' to cart');
+        $I->comment('A guest is adding a first product of type ' . $product1->type . ' to cart');
         cart()->addProduct($product1->id, $data);
         $I->assertEquals(1, cart()->getCart()->items->count());
 
@@ -215,8 +215,6 @@ class CartCest
         $I->assertEquals(1, cart()->getCart()->items->count());
 
         auth()->guard('customer')->logout();
-        cart()->setCart(null);
-
         $data = [
             '_token'     => session('_token'),
             'quantity'   => 1,
@@ -229,7 +227,7 @@ class CartCest
             $data['booking'] = ['qty' => [$bookingTicket2->id => 1]];
         }
 
-        $I->comment('Guest is adding a product of type ' . $product2->type . ' with id ' . $product2->id . ' to cart.');
+        $I->comment('Guest is adding a product of type ' . $product2->type . ' to cart.');
         cart()->addProduct($product2->id, $data);
         $I->assertEquals(1, cart()->getCart()->items->count());
 
@@ -240,7 +238,6 @@ class CartCest
         $I->assertEquals(2, cart()->getCart()->items->count());
 
         auth()->guard('customer')->logout();
-        cart()->setCart(null);
         $data = [
             '_token'     => session('_token'),
             'quantity'   => 2,
@@ -353,8 +350,6 @@ class CartCest
         session()->forget('cart');
 
         auth()->guard('customer')->logout();
-        
-        cart()->setCart(null);
 
         session()->forget('cart');
     }

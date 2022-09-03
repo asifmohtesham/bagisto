@@ -13,8 +13,7 @@ class Category extends BaseCategory implements Sitemapable
      */
     public function toSitemapTag(): Url | string | array
     {
-        if (
-            ! $this->slug
+        if (! $this->slug
             || ! $this->status
         ) {
             return [];

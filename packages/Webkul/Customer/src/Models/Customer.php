@@ -202,7 +202,9 @@ class Customer extends Authenticatable implements CustomerContract, JWTSubject
      */
     public function isWishlistShared(): bool
     {
-        return (bool) $this->wishlist_items()->where('shared', 1)->first();
+        return $this->wishlist_items()->where('shared', 1)->first()
+            ? true
+            : false;
     }
 
     /**

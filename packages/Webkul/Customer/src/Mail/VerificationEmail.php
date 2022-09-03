@@ -35,6 +35,7 @@ class VerificationEmail extends Mailable
             ->with('data', [
                 'email' => $this->verificationData['email'],
                 'token' => $this->verificationData['token'],
-            ]);
+                ]
+            );
     }
 }

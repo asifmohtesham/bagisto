@@ -51,12 +51,5 @@ return [
         'edit'                  => 'ویرایش کنید',
         'delete'                => 'حذف',
         'view'                  => 'چشم انداز',
-        'active'                => 'روشن کن',
-        'inactive'              => 'غیر فعال',
-        'all-channels'          => 'همه کانال ها',
-        'all-locales'           => 'همه افراد محلی',
-        'all-customer-groups'   => 'همه گروه های مشتری',
-        'records-found'         => 'رکورد(های) یافت شده',
-        'clear-all'             => 'Clear All'
     ],
 ];

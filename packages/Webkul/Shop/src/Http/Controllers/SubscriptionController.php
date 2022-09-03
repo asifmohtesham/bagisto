@@ -37,7 +37,7 @@ class SubscriptionController extends Controller
         $alreadySubscribed = $this->subscriptionRepository->findWhere(['email' => $email]);
 
         $unique = function () use ($alreadySubscribed) {
-            return ! $alreadySubscribed->count();
+            return $alreadySubscribed->count() > 0 ? 0 : 1;
         };
 
         if ($unique()) {
@@ -93,11 +93,7 @@ class SubscriptionController extends Controller
         $subscriber = $this->subscriptionRepository->findOneByField('token', $token);
 
         if (isset($subscriber)) {
-            if (
-                $subscriber->count() > 0
-                && $subscriber->is_subscribed
-                && $subscriber->update(['is_subscribed' => 0])
-            ) {
+            if ($subscriber->count() > 0 && $subscriber->is_subscribed == 1 && $subscriber->update(['is_subscribed' => 0])) {
                 session()->flash('info', trans('shop::app.subscription.unsubscribed'));
             } else {
                 session()->flash('info', trans('shop::app.subscription.already-unsub'));

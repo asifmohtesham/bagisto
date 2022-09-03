@@ -21,11 +21,11 @@ class LocaleRepository extends Repository
     /**
      * Specify model class name.
      *
-     * @return string
+     * @return mixed
      */
-    public function model(): string
+    public function model()
     {
-        return 'Webkul\Core\Contracts\Locale';
+        return \Webkul\Core\Contracts\Locale::class;
     }
 
     /**

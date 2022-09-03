@@ -12,8 +12,6 @@ return [
         'remove-all-success' => 'Todos os itens da sua lista de desejos foram removidos',
     ],
 
-    'product-removed'  => 'Product Is No More Available As Removed By Admin',
-
     'reviews' => [
         'empty' => 'Você não avaliou nenhum produto ainda',
     ],

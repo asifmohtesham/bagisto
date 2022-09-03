@@ -43,14 +43,14 @@
                     @foreach ($comparableAttributes as $attribute)
                         <tr>
                             <td>
-                                <h4 class="fs16">{{ $attribute['admin_name'] }}</h4>
+                                <span class="fs16">{{ $attribute['admin_name'] }}</span>
                             </td>
 
                             <td :key="`title-${index}`" v-for="(product, index) in products">
                                 @switch ($attribute['code'])
                                     @case('name')
                                         <a :href="`${baseUrl}/${product.url_key}`" class="unset remove-decoration active-hover">
-                                            <h5 class="fw6 fs18 mt-0" v-text="product['{{ $attribute['code'] }}']"></h5>
+                                            <h3 class="fw6 fs18 mt-0" v-text="product['{{ $attribute['code'] }}']"></h3>
                                         </a>
                                         @break
 

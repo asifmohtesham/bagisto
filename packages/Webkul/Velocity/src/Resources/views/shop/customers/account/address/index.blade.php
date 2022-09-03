@@ -52,11 +52,11 @@
                                         {{ __('shop::app.customer.account.address.index.edit') }}
                                     </a>
 
-                                    <a class="card-link" href="javascript:void(0);" onclick="deleteAddress('{{ __('shop::app.customer.account.address.index.confirm-delete') }}', '{{ $address->id }}')">
+                                    <a class="card-link" href="javascript:void(0);" onclick="deleteAddress('{{ __('shop::app.customer.account.address.index.confirm-delete') }}')">
                                         {{ __('shop::app.customer.account.address.index.delete') }}
                                     </a>
 
-                                    <form id="deleteAddressForm{{ $address->id }}" action="{{ route('address.delete', $address->id) }}" method="post">
+                                    <form id="deleteAddressForm" action="{{ route('address.delete', $address->id) }}" method="post">
                                         @method('delete')
 
                                         @csrf
@@ -74,12 +74,12 @@
 
 @push('scripts')
     <script>
-        function deleteAddress(message, addressId) {
+        function deleteAddress(message) {
             if (! confirm(message)) {
                 return;
             }
 
-            $(`#deleteAddressForm${addressId}`).submit();
+            $('#deleteAddressForm').submit();
         }
     </script>
 @endpush

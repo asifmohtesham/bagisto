@@ -516,7 +516,6 @@ return [
                 'invoice-missing'   => 'Bu fatura kimliği mevcut değil',
                 'transaction-saved' => 'İşlem kaydedildi',
                 'already-paid'      => 'Bu fatura zaten ödendi',
-                'transaction-amount-exceeds' => 'The specified amount of this transaction exceeds the total amount of the invoice.',
             ],
         ],
     ],
@@ -609,11 +608,6 @@ return [
             'save'                          => 'Kaydet',
             'cancel'                        => 'İptal',
             'saved-inventory-message'       => 'Ürün envanteri başarıyla kaydedildi.',
-            'validations'                   => [
-                'quantity-required' => 'Quantity is required.',
-                'quantity-integer'  => 'Quantity should be integer.',
-                'quantity-min-zero' => 'Quantity should be greater then zero.',
-            ],
         ],
 
         'attributes' => [
@@ -730,8 +724,6 @@ return [
         'yes'            => 'Evet',
         'no'             => 'Hayır',
         'delete'         => 'Sil',
-        'enable-atleast-one-shipping' => 'En az bir gönderim yöntemini etkinleştirin.',
-        'enable-atleast-one-payment'  => 'En az bir ödeme yöntemini etkinleştirin.',
 
         'tax-categories' => [
             'title'           => 'Vergi Kategorileri',

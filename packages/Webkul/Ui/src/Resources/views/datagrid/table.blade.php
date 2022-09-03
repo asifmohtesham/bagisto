@@ -22,10 +22,7 @@
 <div class="table">
     <datagrid-filters></datagrid-filters>
 
-    @if (
-        isset($results['paginated'])
-        && $results['paginated']
-    )
+    @if (isset($results['paginated']) && $results['paginated'])
         @include('ui::datagrid.pagination', ['results' => $results['records']])
     @endif
 

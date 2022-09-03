@@ -79,7 +79,6 @@ class ConfigurationController extends Controller
     {
         if (! request()->route('slug')) {
             $firstItem = current($this->configTree->items);
-
             $secondItem = current($firstItem['children']);
 
             return $this->getSlugs($secondItem);
@@ -98,46 +97,10 @@ class ConfigurationController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Webkul\Admin\Http\Requests\ConfigurationForm  $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\Response
      */
     public function store(ConfigurationForm $request)
     {
-        $data = $request->request->all();
-        
-        if (isset($data['sales']['carriers'])) {
-            $atLeastOneCarrierEnabled = false;
-            
-            foreach ($data['sales']['carriers'] as $carrier) {
-                if ($carrier['active']) {
-                    $atLeastOneCarrierEnabled = true;
-                    
-                    break;
-                }
-            }
-            
-            if (! $atLeastOneCarrierEnabled) {
-                session()->flash('error', trans('admin::app.configuration.enable-atleast-one-shipping'));
-                
-                return redirect()->back();
-            }
-        } elseif (isset($data['sales']['paymentmethods'])) {
-            $atLeastOnePaymentMethodEnabled = false;
-            
-            foreach ($data['sales']['paymentmethods'] as $paymentMethod) {
-                if ($paymentMethod['active']) {
-                    $atLeastOnePaymentMethodEnabled = true;
-
-                    break;
-                }
-            }
-            
-            if (! $atLeastOnePaymentMethodEnabled) {
-                session()->flash('error', trans('admin::app.configuration.enable-atleast-one-payment'));
-                
-                return redirect()->back();
-            }
-        }
-
         $this->coreConfigRepository->create($request->except(['_token', 'admin_locale']));
 
         session()->flash('success', trans('admin::app.configuration.save-message'));

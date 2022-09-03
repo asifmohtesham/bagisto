@@ -532,12 +532,10 @@ return [
             ],
             'minimum-order-message'     => 'כמות ההזמנה המינימלית היא :כמות',
             'suspended-account-message' => 'חשבונך הושעה.',
-            'inactive-account-message' =>  'החשבון שלך לא היה פעיל.',
             'check-shipping-address'    => 'אנא בדוק כתובת למשלוח.',
             'check-billing-address'     => 'אנא בדוק את כתובת החיוב.',
             'specify-shipping-method'   => 'אנא ציין את שיטת המשלוח.',
             'specify-payment-method'    => 'אנא ציין אמצעי תשלום.',
-            'rule-applied'              => 'Cart rule applied',
         ],
 
         'onepage' => [
@@ -610,7 +608,6 @@ return [
             'invalid-coupon'      => 'קוד הקופון אינו חוקי.',
             'success-coupon'      => 'קוד הקופון הוחל בהצלחה.',
             'coupon-apply-issue'  => 'לא ניתן להחיל קוד קופון.',
-            'coupon-already-applied' => 'קוד קופון כבר הוחל.',
         ],
 
         'success' => [

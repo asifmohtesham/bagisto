@@ -10,9 +10,9 @@ class CatalogRuleProductPriceRepository extends Repository
     /**
      * Specify Model class name.
      *
-     * @return string
+     * @return mixed
      */
-    function model(): string
+    function model()
     {
         return 'Webkul\CatalogRule\Contracts\CatalogRuleProductPrice';
     }

@@ -2,10 +2,11 @@
 
 namespace Webkul\Sales\Repositories;
 
-use Illuminate\Container\Container;
+use Illuminate\Container\Container as App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Webkul\Core\Eloquent\Repository;
+use Webkul\Sales\Contracts\Refund;
 
 class RefundRepository extends Repository
 {
@@ -16,17 +17,17 @@ class RefundRepository extends Repository
      * @param  \Webkul\Sales\Repositories\OrderItemRepository  $orderItemRepository
      * @param  \Webkul\Sales\Repositories\RefundItemRepository   $refundItemRepository
      * @param  \Webkul\Sales\Repositories\DownloadableLinkPurchasedRepository  $downloadableLinkPurchasedRepository
-     * @param  \Illuminate\Container\Container  $container
+     * @param  \Illuminate\Container\Container  $app
      */
     public function __construct(
         protected OrderRepository $orderRepository,
         protected OrderItemRepository $orderItemRepository,
         protected RefundItemRepository $refundItemRepository,
         protected DownloadableLinkPurchasedRepository $downloadableLinkPurchasedRepository,
-        Container $container
+        App $app
     )
     {
-        parent::__construct($container);
+        parent::__construct($app);
     }
 
     /**
@@ -34,9 +35,9 @@ class RefundRepository extends Repository
      *
      * @return string
      */
-    public function model(): string
+    public function model()
     {
-        return 'Webkul\Sales\Contracts\Refund';
+        return Refund::class;
     }
 
     /**
@@ -127,10 +128,7 @@ class RefundRepository extends Repository
                             'additional'           => $childOrderItem->additional,
                         ]);
 
-                        if (
-                            $childOrderItem->getTypeInstance()->isStockable()
-                            || $childOrderItem->getTypeInstance()->showQuantityBox()
-                        ) {
+                        if ($childOrderItem->getTypeInstance()->isStockable() || $childOrderItem->getTypeInstance()->showQuantityBox()) {
                             $this->refundItemRepository->returnQtyToProductInventory($childOrderItem, $finalQty);
                         }
 
@@ -138,10 +136,7 @@ class RefundRepository extends Repository
                     }
 
                 } else {
-                    if (
-                        $orderItem->getTypeInstance()->isStockable()
-                        || $orderItem->getTypeInstance()->showQuantityBox()
-                    ) {
+                    if ($orderItem->getTypeInstance()->isStockable() || $orderItem->getTypeInstance()->showQuantityBox()) {
                         $this->refundItemRepository->returnQtyToProductInventory($orderItem, $qty);
                     }
                 }

@@ -2,7 +2,7 @@
 
 namespace Webkul\Product\Repositories;
 
-use Illuminate\Container\Container;
+use Illuminate\Container\Container as App;
 use Webkul\Product\Repositories\ProductRepository;
 
 class ProductImageRepository extends ProductMediaRepository
@@ -11,15 +11,15 @@ class ProductImageRepository extends ProductMediaRepository
      * Create a new repository instance.
      *
      * @param  \Webkul\Product\Repositories\ProductRepository  $productRepository
-     * @param  \Illuminate\Container\Container  $container
+     * @param  \Illuminate\Container\Container  $app
      * @return void
      */
     public function __construct(
         protected ProductRepository $productRepository,
-        Container $container
+        App $app
     )
     {
-        parent::__construct($container);
+        parent::__construct($app);
     }
 
     /**
@@ -29,7 +29,7 @@ class ProductImageRepository extends ProductMediaRepository
      */
     public function model(): string
     {
-        return 'Webkul\Product\Contracts\ProductImage';
+        return \Webkul\Product\Contracts\ProductImage::class;
     }
 
     /**

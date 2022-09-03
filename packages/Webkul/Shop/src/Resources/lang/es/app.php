@@ -536,12 +536,10 @@ return [
             ],
             'minimum-order-message'     => 'La cantidad mínima de pedido es :amount',
             'suspended-account-message' => 'Your account has been suspended.',
-            'inactive-account-message' =>  'Su cuenta ha estado inactiva.',
             'check-shipping-address'    => 'Please check shipping address.',
             'check-billing-address'     => 'Please check billing address.',
             'specify-shipping-method'   => 'Please specify shipping method.',
             'specify-payment-method'    => 'Please specify payment method.',
-            'rule-applied'              => 'Cart rule applied',
         ],
 
         'onepage' => [
@@ -614,7 +612,6 @@ return [
             'invalid-coupon'      => 'El código del cupón no es válido.',
             'success-coupon'      => 'Código del cupón aplicado correctamente.',
             'coupon-apply-issue'  => 'No se puede aplicar el código de cupón.',
-            'coupon-already-applied' => 'Código de cupón ya aplicado.',
         ],
 
         'success' => [

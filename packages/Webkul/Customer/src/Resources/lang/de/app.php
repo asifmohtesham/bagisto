@@ -12,8 +12,6 @@ return [
         'remove-all-success' => 'Alle Elemente von Ihrer Wunschliste wurden entfernt',
     ],
 
-    'product-removed'  => 'Das Produkt ist nicht mehr verfügbar, da es vom Administrator entfernt wurde',
-
     'reviews' => [
         'empty' => 'Sie haben noch kein Produkt bewertet',
     ],

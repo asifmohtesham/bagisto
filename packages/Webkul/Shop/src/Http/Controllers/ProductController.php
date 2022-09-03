@@ -114,7 +114,7 @@ class ProductController extends Controller
             $filterAttributes = $this->productFlatRepository->getFilterAttributes($category);
         }
 
-        if (empty($filterAttributes)) {
+        if (! count($filterAttributes) > 0) {
             $filterAttributes = $attributeRepository->getFilterAttributes();
         }
 

@@ -1,7 +1,4 @@
-@if (
-    $velocityMetaData
-    && $velocityMetaData->slider
-)
+@if ($velocityMetaData && $velocityMetaData->slider)
     <div class="slider-container">
         <slider-component
             direction="{{ core()->getCurrentLocale()->direction }}"

@@ -12,8 +12,6 @@ return [
         'remove-all-success' => 'All The Items From Your Wishlist Have Been Removed',
     ],
 
-    'product-removed'  => 'Product Is No More Available As Removed By Admin',
-
     'reviews' => [
         'empty' => 'You have not reviewed any product yet',
     ],

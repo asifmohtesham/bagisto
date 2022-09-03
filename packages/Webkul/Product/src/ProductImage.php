@@ -46,11 +46,7 @@ class ProductImage extends AbstractProduct
             $images[] = $this->getCachedImageUrls($image->path);
         }
 
-        if (
-            ! $product->parent_id
-            && ! count($images)
-            && ! count($product->videos)
-        ) {
+        if (! $product->parent_id && ! count($images) && ! count($product->videos)) {
             $images[] = $this->getFallbackImageUrls();
         }
 
@@ -99,17 +95,15 @@ class ProductImage extends AbstractProduct
     {
         static $loadedBaseImages = [];
 
-        if (! $product) {
-            return;
-        }
+        if ($product) {
+            if (array_key_exists($product->id, $loadedBaseImages)) {
+                return $loadedBaseImages[$product->id];
+            }
 
-        if (array_key_exists($product->id, $loadedBaseImages)) {
-            return $loadedBaseImages[$product->id];
+            return $loadedBaseImages[$product->id] = $galleryImages
+                ? $galleryImages[0]
+                : $this->otherwiseLoadFromProduct($product);
         }
-
-        return $loadedBaseImages[$product->id] = $galleryImages
-            ? $galleryImages[0]
-            : $this->otherwiseLoadFromProduct($product);
     }
 
     /**

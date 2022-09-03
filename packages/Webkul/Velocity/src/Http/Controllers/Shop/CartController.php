@@ -64,15 +64,11 @@ class CartController extends Controller
     {
         try {
             $cart = Cart::getCart();
-
             $id = request()->get('product_id');
 
             $cart = Cart::addProduct($id, request()->all());
 
-            if (
-                is_array($cart)
-                && isset($cart['warning'])
-            ) {
+            if (is_array($cart) && isset($cart['warning'])) {
                 $response = [
                     'status'  => 'warning',
                     'message' => $cart['warning'],
@@ -80,6 +76,12 @@ class CartController extends Controller
             }
 
             if ($cart instanceof CartModel) {
+                $formattedItems = [];
+
+                foreach ($cart->items as $item) {
+                    array_push($formattedItems, $this->velocityHelper->formatCartItem($item));
+                }
+
                 $response = [
                     'status'         => 'success',
                     'totalCartItems' => sizeof($cart->items),
@@ -95,6 +97,7 @@ class CartController extends Controller
                 }
             }
         } catch(\Exception $exception) {
+
             session()->flash('warning', __($exception->getMessage()));
 
             $product = $this->productRepository->find($id);

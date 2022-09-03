@@ -23,6 +23,8 @@ class OrderController extends Controller
         protected InvoiceRepository $invoiceRepository
     )
     {
+        $this->currentCustomer = auth()->guard('customer')->user();
+
         parent::__construct();
     }
 
@@ -48,10 +50,8 @@ class OrderController extends Controller
      */
     public function view($id)
     {
-        $customer = auth()->guard('customer')->user();
-
         $order = $this->orderRepository->findOneWhere([
-            'customer_id' => $customer->id,
+            'customer_id' => $this->currentCustomer->id,
             'id'          => $id,
         ]);
 
@@ -70,11 +70,9 @@ class OrderController extends Controller
      */
     public function printInvoice($id)
     {
-        $customer = auth()->guard('customer')->user();
-
         $invoice = $this->invoiceRepository->findOrFail($id);
 
-        if ($invoice->order->customer_id !== $customer->id) {
+        if ($invoice->order->customer_id !== $this->currentCustomer->id) {
             abort(404);
         }
 
@@ -92,10 +90,8 @@ class OrderController extends Controller
      */
     public function cancel($id)
     {
-        $customer = auth()->guard('customer')->user();
-
         /* find by order id in customer's order */
-        $order = $customer->all_orders()->find($id);
+        $order = $this->currentCustomer->all_orders()->find($id);
 
         /* if order id not found then process should be aborted with 404 page */
         if (! $order) {

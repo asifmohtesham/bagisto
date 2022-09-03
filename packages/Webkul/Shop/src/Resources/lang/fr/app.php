@@ -500,8 +500,8 @@ return [
             'proceed-to-checkout'      => 'Passer à la caisse',
             'remove'                   => 'Supprimer',
             'remove-link'              => 'Supprimer',
-            'remove-all-items'         => 'Supprimer tous les éléments',
-            'confirm-action'           => 'Confirmez cette action?',
+            'remove-all-items'         => 'Remove all items',
+            'confirm-action'           => 'Confirm this action?',
             'move-to-wishlist'         => 'Placer dans la liste de souhaits',
             'move-to-wishlist-success' => 'L\'article a été déplacé vers la liste de souhaits avec succès.',
             'move-to-wishlist-error'   => 'Impossible de déplacer l\'élément vers la liste de souhaits, veuillez réessayer plus tard.',
@@ -537,12 +537,10 @@ return [
 
             'minimum-order-message'     => 'Le montant minimum de commande est de :amount',
             'suspended-account-message' => 'Your account has been suspended.',
-            'inactive-account-message' =>  'Your account has been inactive.',
             'check-shipping-address'    => 'Please check shipping address.',
             'check-billing-address'     => 'Please check billing address.',
             'specify-shipping-method'   => 'Please specify shipping method.',
             'specify-payment-method'    => 'Please specify payment method.',
-            'rule-applied'              => 'Cart rule applied',
         ],
 
         'onepage' => [
@@ -613,7 +611,6 @@ return [
             'invalid-coupon'      => 'Le code promo n\'est pas valide.',
             'success-coupon'      => 'Code promo appliqué avec succès.',
             'coupon-apply-issue'  => 'Le code promo ne peut pas être appliqué.',
-            'coupon-already-applied' => 'Code promo déjà appliqué.',
         ],
 
         'success' => [

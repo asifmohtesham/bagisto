@@ -2,8 +2,9 @@
 
 namespace Webkul\Sales\Repositories;
 
-use Illuminate\Container\Container;
+use Illuminate\Container\Container as App;
 use Webkul\Core\Eloquent\Repository;
+use Webkul\Sales\Contracts\DownloadableLinkPurchased;
 use Webkul\Product\Repositories\ProductDownloadableLinkRepository;
 
 class DownloadableLinkPurchasedRepository extends Repository
@@ -12,15 +13,14 @@ class DownloadableLinkPurchasedRepository extends Repository
      * Create a new repository instance.
      *
      * @param  \Webkul\Product\Repositories\ProductDownloadableLinkRepository  $productDownloadableLinkRepository
-     * @param  \Illuminate\Container\Container  $container
      * @return void
      */
     public function __construct(
         protected ProductDownloadableLinkRepository $productDownloadableLinkRepository,
-        Container $container
+        App $app
     )
     {
-        parent::__construct($container);
+        parent::__construct($app);
     }
 
     /**
@@ -28,9 +28,9 @@ class DownloadableLinkPurchasedRepository extends Repository
      *
      * @return string
      */
-    function model(): string
+    function model()
     {
-        return 'Webkul\Sales\Contracts\DownloadableLinkPurchased';
+        return DownloadableLinkPurchased::class;
     }
 
     /**
@@ -71,10 +71,7 @@ class DownloadableLinkPurchasedRepository extends Repository
      * @return bool
      */
     private function isValidDownloadableProduct($orderItem) : bool {
-        if (
-            stristr($orderItem->type,'downloadable') !== false
-            && isset($orderItem->additional['links'])
-        ) {
+        if (stristr($orderItem->type,'downloadable') !== false && isset($orderItem->additional['links'])) {
             return true;
         }
 

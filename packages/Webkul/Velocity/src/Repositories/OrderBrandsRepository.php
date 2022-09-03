@@ -19,7 +19,7 @@ class OrderBrandsRepository extends Repository
      *
      * @return string
      */
-    function model(): string
+    function model()
     {
         return 'Webkul\Velocity\Contracts\OrderBrand';
     }

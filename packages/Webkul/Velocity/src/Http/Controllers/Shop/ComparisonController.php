@@ -75,19 +75,11 @@ class ComparisonController extends Controller
             $productFlatRepository = app('\Webkul\Product\Models\ProductFlat');
 
             $productFlat = $productFlatRepository
-                ->where('id', $productId)
-                ->orWhere('parent_id', $productId)
-                ->orWhere('id', $productId)
-                ->get()
-                ->first();
-                            
-            if ($productFlat == null) {
-                return response()->json([
-                    'status'  => 'warning',
-                    'message' => trans('customer::app.product-removed'),
-                    'label'   => trans('velocity::app.shop.general.alert.warning'),
-                ]);
-            }
+                            ->where('id', $productId)
+                            ->orWhere('parent_id', $productId)
+                            ->orWhere('id', $productId)
+                            ->get()
+                            ->first();
 
             if ($productFlat) {
                 $productId = $productFlat->id;
@@ -123,11 +115,9 @@ class ComparisonController extends Controller
         if (request()->get('productId') == 'all') {
             // delete all
             $customerId = auth()->guard('customer')->user()->id;
-
             $this->compareProductsRepository->deleteWhere([
                 'customer_id' => auth()->guard('customer')->user()->id,
             ]);
-
             $message = trans('velocity::app.customer.compare.removed-all');
         } else {
             // delete individual
@@ -135,7 +125,6 @@ class ComparisonController extends Controller
                 'product_flat_id' => request()->get('productId'),
                 'customer_id'     => auth()->guard('customer')->user()->id,
             ]);
-            
             $message = trans('velocity::app.customer.compare.removed');
         }
 

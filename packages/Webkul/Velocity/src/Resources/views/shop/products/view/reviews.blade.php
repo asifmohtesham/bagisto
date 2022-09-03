@@ -16,10 +16,7 @@
 {!! view_render_event('bagisto.shop.products.review.before', ['product' => $product]) !!}
 
     @if ($total)
-        @if (
-            isset($accordian)
-            && $accordian
-        )
+        @if (isset($accordian) && $accordian)
             <accordian :active="true">
                 {{-- customer ratings --}}
                 <div slot="header" class="col-lg-12 no-padding">
@@ -118,10 +115,7 @@
             </div>
         @endif
 
-        @if (
-            isset($accordian)
-            && $accordian
-        )
+        @if (isset($accordian) && $accordian)
             <accordian :title="'{{ __('shop::app.products.total-reviews') }}'" :active="true">
                 {{-- customer reviews --}}
                 <div slot="header" class="col-lg-12 no-padding">
@@ -218,10 +212,7 @@
         @endif
 
     @else
-        @if (
-            core()->getConfigData('catalog.products.review.guest_review')
-            || auth()->guard('customer')->check()
-        )
+        @if (core()->getConfigData('catalog.products.review.guest_review') || auth()->guard('customer')->check())
             <div class="customer-rating" style="border: none">
                 <a href="{{ route('shop.reviews.create', ['slug' => $product->url_key ]) }}">
                     <button type="button" class="theme-btn light">{{ __('velocity::app.products.write-your-review') }}</button>

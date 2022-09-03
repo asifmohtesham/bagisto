@@ -22,10 +22,7 @@ class TableSlot extends Booking
             $bookedQty *= $bookingProduct->table_slot->guest_limit;
         }
 
-        if (
-            $bookingProduct->qty - $bookedQty < $requestedQty
-            || $this->isSlotExpired($cartItem)
-        ) {
+        if ($bookingProduct->qty - $bookedQty < $requestedQty || $this->isSlotExpired($cartItem)) {
             return false;
         }
 

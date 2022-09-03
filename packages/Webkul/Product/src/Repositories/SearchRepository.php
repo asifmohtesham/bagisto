@@ -2,11 +2,11 @@
 
 namespace Webkul\Product\Repositories;
 
-use Illuminate\Container\Container;
-use Illuminate\Support\Facades\Storage;
-use Webkul\Core\Eloquent\Repository;
-use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Core\Traits\Sanitizer;
+use Webkul\Core\Eloquent\Repository;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Container\Container as App;
+use Webkul\Product\Repositories\ProductRepository;
 
 class SearchRepository extends Repository
 {
@@ -15,23 +15,18 @@ class SearchRepository extends Repository
      * Create a new repository instance.
      *
      * @param  \Webkul\Product\Repositories\ProductRepository  $productRepository
-     * @param  \Illuminate\Container\Container  $container
+     * @param  \Illuminate\Container\Container  $app
      * @return void
      */
     public function __construct(
         protected ProductRepository $productRepository,
-        Container $container
+        App $app
     )
     {
-        parent::__construct($container);
+        parent::__construct($app);
     }
-    
-    /**
-     * Specify model class name.
-     *
-     * @return string
-     */
-    function model(): string
+
+    function model()
     {
         return 'Webkul\Product\Contracts\Product';
     }

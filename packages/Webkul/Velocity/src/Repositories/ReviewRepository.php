@@ -19,7 +19,7 @@ class ReviewRepository extends Repository
      *
      * @return string
      */
-    function model(): string
+    function model()
     {
         return 'Webkul\Product\Contracts\ProductReview';
     }
@@ -27,6 +27,8 @@ class ReviewRepository extends Repository
 
     function getAll()
     {
-        return $this->all();
+        $reviews = $this->model->get();
+
+        return $reviews;
     }
 }

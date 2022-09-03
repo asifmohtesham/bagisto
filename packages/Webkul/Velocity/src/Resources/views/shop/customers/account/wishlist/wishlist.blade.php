@@ -11,7 +11,7 @@
         <span class="account-heading">{{ __('shop::app.customer.account.wishlist.title') }}</span>
 
         @if (count($items))
-            <span class="account-action d-inline-flex">
+            <span class="account-action">
                 <form id="remove-all-wishlist" class="d-none" action="{{ route('customer.wishlist.removeall') }}" method="POST">
                     @method('DELETE')
 
@@ -81,7 +81,7 @@
 
 @push('scripts')
     @if($isSharingEnabled)
-        <script type="text/x-template" id="share-component-template">
+        <script type="text/x-template" id="share-component-template">            
             <form method="POST">
                 @csrf
 
@@ -122,7 +122,7 @@
                             type="text"
                             class="form-control"
                             v-model="wishlistSharedLink"
-                            v-on:focus="$event.target.select()"
+                            v-on:focus="$event.target.select()" 
                             ref="sharedLink"
                         />
 
@@ -130,14 +130,12 @@
                             <button
                                 class="btn btn-outline-secondary theme-btn"
                                 style="padding: 6px 20px"
-                                id="copy-btn"
-                                title="{{ __('shop::app.customer.account.wishlist.copy-link') }}"
                                 type="button"
                                 @click="copyToClipboard"
                             >
                                 {{ __('shop::app.customer.account.wishlist.copy') }}
                             </button>
-                        </div> 
+                        </div>
                     </div>
 
                     <p class="alert alert-danger" v-else>
@@ -146,7 +144,7 @@
                 </div>
             </form>
         </script>
-
+        
         <script>
             /**
              * Show share wishlist modal.
@@ -166,7 +164,7 @@
                     return {
                         isWishlistShared: parseInt("{{ $isWishlistShared }}"),
 
-                        wishlistSharedLink: "{{ $wishlistSharedLink }}".replace("&amp;", "&"),
+                        wishlistSharedLink: "{{ $wishlistSharedLink }}",
                     }
                 },
 
@@ -195,8 +193,8 @@
 
                     copyToClipboard: function() {
                         this.$refs.sharedLink.focus();
+
                         document.execCommand('copy');
-                        showCopyMessage();
                     }
                 }
             });
@@ -211,12 +209,6 @@
             if (confirm('{{ __('shop::app.customer.account.wishlist.confirm-delete-all') }}')) document.getElementById('remove-all-wishlist').submit();
 
             return;
-        }
-
-        function showCopyMessage()
-        {
-            $('#copy-btn').text("{{ __('shop::app.customer.account.wishlist.copied') }}");
-            $('#copy-btn').css({backgroundColor: '#146e24'});
         }
     </script>
 @endpush

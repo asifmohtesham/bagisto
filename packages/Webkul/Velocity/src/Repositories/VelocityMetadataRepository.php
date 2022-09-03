@@ -11,7 +11,7 @@ class VelocityMetadataRepository extends Repository
      *
      * @return string
      */
-    function model(): string
+    function model()
     {
         return 'Webkul\Velocity\Contracts\VelocityMetadata';
     }

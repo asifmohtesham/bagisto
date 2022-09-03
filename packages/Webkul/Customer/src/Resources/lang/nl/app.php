@@ -12,8 +12,6 @@ return [
         'remove-all-success' => 'Alle items van je verlanglijst zijn verwijderd',
     ],
 
-    'product-removed'  => 'Product is niet meer beschikbaar zoals verwijderd door beheerder',
-
     'reviews' => [
         'empty' => 'U heeft nog geen product beoordeeld',
     ],

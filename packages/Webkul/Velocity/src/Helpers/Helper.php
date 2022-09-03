@@ -72,10 +72,7 @@ class Helper extends Review
         try {
             $orderBrand = $this->orderBrandsRepository->get()->toArray();
 
-            if (
-                isset($orderBrand)
-                && ! empty($orderBrand)
-            ) {
+            if (isset($orderBrand) && ! empty($orderBrand)) {
                 foreach ($orderBrand as $product) {
                     $product_id[] = $product['product_id'];
 
@@ -145,10 +142,7 @@ class Helper extends Review
                 'channel' => $channel,
             ]);
 
-            if (
-                ! $metaData
-                && $default
-            ) {
+            if (! $metaData && $default) {
                 $metaData = $this->velocityMetadataRepository->findOneWhere([
                     'locale'  => 'en',
                     'channel' => 'default',
@@ -193,13 +187,13 @@ class Helper extends Review
         if ($message['message'] = session('success')) {
             $message['messageType'] = 'alert-success';
             $message['messageLabel'] = __('velocity::app.shop.general.alert.success');
-        } elseif ($message['message'] = session('warning')) {
+        } else if ($message['message'] = session('warning')) {
             $message['messageType'] = 'alert-warning';
             $message['messageLabel'] = __('velocity::app.shop.general.alert.warning');
-        } elseif ($message['message'] = session('error')) {
+        } else if ($message['message'] = session('error')) {
             $message['messageType'] = 'alert-danger';
             $message['messageLabel'] = __('velocity::app.shop.general.alert.error');
-        } elseif ($message['message'] = session('info')) {
+        } else if ($message['message'] = session('info')) {
             $message['messageType'] = 'alert-info';
             $message['messageLabel'] = __('velocity::app.shop.general.alert.info');
         }
@@ -280,7 +274,7 @@ class Helper extends Review
 
         $priceHTML = view('shop::products.price', ['product' => $product])->render();
 
-        $isProductNew = ($product->new && strpos($priceHTML, 'sticker sale') === false) ? __('shop::app.products.new') : false;
+        $isProductNew = ($product->new && ! strpos($priceHTML, 'sticker sale') > 0) ? __('shop::app.products.new') : false;
 
         return [
             'priceHTML'        => $priceHTML,
@@ -298,7 +292,8 @@ class Helper extends Review
                 'product'          => $product,
                 'addWishlistClass' => ! (isset($list) && $list) ? '' : '',
 
-                'showCompare' => (bool) core()->getConfigData('general.content.shop.compare_option'),
+                'showCompare' => core()->getConfigData('general.content.shop.compare_option') == '1'
+                    ? true : false,
 
                 'btnText' => (isset($metaInformation['btnText']) && $metaInformation['btnText'])
                     ? $metaInformation['btnText'] : null,

@@ -3,11 +3,12 @@
 namespace Webkul\Product\Repositories;
 
 use Exception;
-use Illuminate\Container\Container;
+use Illuminate\Container\Container as App;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
@@ -23,15 +24,16 @@ class ProductRepository extends Repository
      * Create a new repository instance.
      *
      * @param  \Webkul\Attribute\Repositories\AttributeRepository  $attributeRepository
-     * @param  \Illuminate\Container\Container  $container
+     * @param  \Illuminate\Container\Container  $app
+     *
      * @return void
      */
     public function __construct(
         protected AttributeRepository $attributeRepository,
-        Container $container
+        App $app
     )
     {
-        parent::__construct($container);
+        parent::__construct($app);
     }
 
     /**
@@ -39,9 +41,9 @@ class ProductRepository extends Repository
      *
      * @return string
      */
-    public function model(): string
+    public function model()
     {
-        return 'Webkul\Product\Contracts\Product';
+        return \Webkul\Product\Contracts\Product::class;
     }
 
     /**
@@ -52,9 +54,13 @@ class ProductRepository extends Repository
      */
     public function create(array $data)
     {
+        Event::dispatch('catalog.product.create.before');
+
         $typeInstance = app(config('product_types.' . $data['type'] . '.class'));
 
         $product = $typeInstance->create($data);
+
+        Event::dispatch('catalog.product.create.after', $product);
 
         return $product;
     }
@@ -69,7 +75,9 @@ class ProductRepository extends Repository
      */
     public function update(array $data, $id, $attribute = 'id')
     {
-        $product = $this->findOrFail($id);
+        Event::dispatch('catalog.product.update.before', $id);
+
+        $product = $this->find($id);
 
         $product = $product->getTypeInstance()->update($data, $id, $attribute);
 
@@ -77,7 +85,24 @@ class ProductRepository extends Repository
             $product['channels'] = $data['channels'];
         }
 
+        Event::dispatch('catalog.product.update.after', $product);
+
         return $product;
+    }
+
+    /**
+     * Delete product.
+     *
+     * @param  int  $id
+     * @return void
+     */
+    public function delete($id)
+    {
+        Event::dispatch('catalog.product.delete.before', $id);
+
+        parent::delete($id);
+
+        Event::dispatch('catalog.product.delete.after', $id);
     }
 
     /**
@@ -156,15 +181,7 @@ class ProductRepository extends Repository
 
         $page = Paginator::resolveCurrentPage('page');
 
-        $repository = app(ProductFlatRepository::class)->with([
-            'images',
-            'product.videos',
-            'product.attribute_values',
-            'product.customer_group_prices',
-            'product.inventory_sources',
-            'product.inventories',
-            'product.ordered_inventories',
-        ])->scopeQuery(function ($query) use ($params, $categoryId) {
+        $repository = app(ProductFlatRepository::class)->scopeQuery(function ($query) use ($params, $categoryId) {
             $channel = core()->getRequestedChannelCode();
 
             $locale = core()->getRequestedLocaleCode();
@@ -206,11 +223,7 @@ class ProductRepository extends Repository
 
             # sort direction
             $orderDirection = 'asc';
-
-            if (
-                isset($params['order'])
-                && in_array($params['order'], ['desc', 'asc'])
-            ) {
+            if (isset($params['order']) && in_array($params['order'], ['desc', 'asc'])) {
                 $orderDirection = $params['order'];
             } else {
                 $sortOptions = $this->getDefaultSortByOption();
@@ -280,6 +293,7 @@ class ProductRepository extends Repository
                 $qb->where(function ($filterQuery) use ($attributeFilters) {
                     foreach ($attributeFilters as $attribute) {
                         $filterQuery->orWhere(function ($attributeQuery) use ($attribute) {
+
                             $column = DB::getTablePrefix() . 'product_attribute_values.' . ProductAttributeValueProxy::modelClass()::$attributeTypeFields[$attribute->type];
 
                             $filterInputValues = explode(',', request()->get($attribute->code));
@@ -295,7 +309,6 @@ class ProductRepository extends Repository
                                         if (! is_numeric($filterValue)) {
                                             continue;
                                         }
-
                                         $attributeValueQuery->orWhereRaw("find_in_set(?, {$column})", [$filterValue]);
                                     }
                                 });
@@ -455,7 +468,7 @@ class ProductRepository extends Repository
                 ->where('visible_individually', 1)
                 ->orderBy('product_id', 'desc')
                 ->paginate(16);
-        } elseif (config('scout.driver') == 'elastic') {
+        } else if (config('scout.driver') == 'elastic') {
             $queries = explode('_', $term);
 
             $results = app(ProductFlatRepository::class)->getModel()::search(implode(' OR ', $queries))
@@ -533,7 +546,7 @@ class ProductRepository extends Repository
             ->leftJoin('product_inventories as pv', 'product_flat.product_id', '=', 'pv.product_id')
             ->where(function ($qb) {
                 return $qb
-                    /* for grouped, downloadable, bundle and booking product */
+                /* for grouped, downloadable, bundle and booking product */
                     ->orWhereIn('ps.type', ['grouped', 'downloadable', 'bundle', 'booking'])
                     /* for simple and virtual product */
                     ->orWhere(function ($qb) {

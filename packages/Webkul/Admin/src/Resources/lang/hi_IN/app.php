@@ -522,7 +522,6 @@ return [
                 'invoice-missing'   => 'यह चालान आईडी मौजूद नहीं है',
                 'transaction-saved' => 'लेन-देन सहेजा गया है',
                 'already-paid'      => 'इस चालान का भुगतान पहले ही किया जा चुका है',
-                'transaction-amount-exceeds' => 'The specified amount of this transaction exceeds the total amount of the invoice.',
             ],
         ],
     ],
@@ -542,10 +541,10 @@ return [
                 'bundle'                        => 'बंडल',
                 'downloadable'                  => 'डाउनलोड करने योग्य',
                 'grouped'                       => 'समूहीकृत',
-                'virtual'                       => 'आभासी',
+                'virtual'                       => 'आभासी',            
                 'configurable'                  => 'कॉन्फ़िगर करने योग्य',
 
-            ],
+            ],            
             'familiy'                       => 'विशेषता परिवार',
             'sku'                           => 'एसकेयू',
             'configurable-attributes'       => 'कॉन्फ़िगर करने योग्य गुण',
@@ -619,12 +618,6 @@ return [
             'cancel'                        => 'रद्द करें',
             'saved-inventory-message'       => 'उत्पाद सूची सफलतापूर्वक सहेजी गई।',
             'image-size'                    => 'इमेज रेजोल्यूशन 640px X 640px जैसा होना चाहिए',
-            'validations'                   => [
-                'quantity-required' => 'Quantity is required.',
-                'quantity-integer'  => 'Quantity should be integer.',
-                'quantity-min-zero' => 'Quantity should be greater then zero.',
-            ],
-            'video-size'                    => 'Maximum video size should be like :size',
         ],
 
         'attributes' => [
@@ -743,8 +736,6 @@ return [
         'yes'            => 'हां',
         'no'             => 'नहीं',
         'delete'         => 'हटाएं',
-        'enable-atleast-one-shipping' => 'कम से कम एक शिपिंग विधि सक्षम करें।',
-        'enable-atleast-one-payment'  => 'कम से कम एक भुगतान विधि सक्षम करें।',
 
         'tax-categories' => [
             'title'           => 'कर श्रेणियाँ',

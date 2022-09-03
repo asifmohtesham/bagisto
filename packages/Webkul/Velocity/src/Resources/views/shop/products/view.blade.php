@@ -126,10 +126,7 @@
                                         <div class="col-12 price">
                                             @include ('shop::products.price', ['product' => $product])
 
-                                            @if (
-                                                Webkul\Tax\Helpers\Tax::isTaxInclusive()
-                                                && $product->getTypeInstance()->getTaxCategory()
-                                            )
+                                            @if (Webkul\Tax\Helpers\Tax::isTaxInclusive() && $product->getTypeInstance()->getTaxCategory())
                                                 <span>
                                                     {{ __('velocity::app.products.tax-inclusive') }}
                                                 </span>
@@ -219,9 +216,8 @@
             method="POST"
             id="product-form"
             @click="onSubmit($event)"
-            @submit.enter.prevent="onSubmit($event)"
-            action="{{ route('cart.add', $product->product_id) }}"
-        >
+            action="{{ route('cart.add', $product->product_id) }}">
+
             <input type="hidden" name="is_buy_now" v-model="is_buy_now">
 
             <slot v-if="slot"></slot>
@@ -229,6 +225,7 @@
             <div v-else>
                 <div class="spritespin"></div>
             </div>
+
         </form>
     </script>
 

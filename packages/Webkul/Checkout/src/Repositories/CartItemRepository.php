@@ -10,11 +10,30 @@ class CartItemRepository extends Repository
     /**
      * Specify Model class name
      *
-     * @return string
+     * @return mixed
      */
-    function model(): string
+
+    function model()
     {
         return 'Webkul\Checkout\Contracts\CartItem';
+    }
+
+    /**
+     * @param array  $data
+     * @param        $id
+     * @param string $attribute
+     *
+     * @return \Webkul\Checkout\Contracts\CartItem|null
+     */
+    public function update(array $data, $id, $attribute = "id"): ?CartItem
+    {
+        $item = $this->find($id);
+
+        if ($item) {
+            $item->update($data);
+        }
+
+        return $item;
     }
 
     /**

@@ -17,7 +17,7 @@ class CartAddressRepository extends Repository
      *
      * @return string
      */
-    function model(): string
+    function model()
     {
         return 'Webkul\Checkout\Contracts\CartAddress';
     }

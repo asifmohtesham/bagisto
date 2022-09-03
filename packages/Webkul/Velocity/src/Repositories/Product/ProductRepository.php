@@ -3,7 +3,7 @@
 namespace Webkul\Velocity\Repositories\Product;
 
 use Webkul\Core\Eloquent\Repository;
-use Illuminate\Container\Container;
+use Illuminate\Container\Container as App;
 use Webkul\Product\Models\ProductAttributeValue;
 use Prettus\Repository\Traits\CacheableRepository;
 use Webkul\Product\Repositories\ProductFlatRepository;
@@ -17,15 +17,15 @@ class ProductRepository extends Repository
      * Create a new controller instance.
      *
      * @param  \Webkul\Attribute\Repositories\AttributeRepository  $attributeRepository
-     * @param  \Illuminate\Container\Container  $container
+     * @param  \Illuminate\Container\Container  $app
      * @return void
      */
     public function __construct(
         protected AttributeRepository $attributeRepository,
-        Container $container
+        App $app
     )
     {
-        parent::__construct($container);
+        parent::__construct($app);
     }
 
     /**
@@ -33,7 +33,7 @@ class ProductRepository extends Repository
      *
      * @return string
      */
-    function model(): string
+    function model()
     {
         return 'Webkul\Product\Contracts\Product';
     }
@@ -52,13 +52,13 @@ class ProductRepository extends Repository
             $locale = core()->getRequestedLocaleCode();
 
             return $query->distinct()
-                ->addSelect('product_flat.*')
-                ->where('product_flat.status', 1)
-                ->where('product_flat.visible_individually', 1)
-                ->where('product_flat.featured', 1)
-                ->where('product_flat.channel', $channel)
-                ->where('product_flat.locale', $locale)
-                ->orderBy('product_id', 'desc');
+                         ->addSelect('product_flat.*')
+                         ->where('product_flat.status', 1)
+                         ->where('product_flat.visible_individually', 1)
+                         ->where('product_flat.featured', 1)
+                         ->where('product_flat.channel', $channel)
+                         ->where('product_flat.locale', $locale)
+                         ->orderBy('product_id', 'desc');
         })->paginate($count);
 
         return $results;
@@ -78,13 +78,13 @@ class ProductRepository extends Repository
             $locale = core()->getRequestedLocaleCode();
 
             return $query->distinct()
-                ->addSelect('product_flat.*')
-                ->where('product_flat.status', 1)
-                ->where('product_flat.visible_individually', 1)
-                ->where('product_flat.new', 1)
-                ->where('product_flat.channel', $channel)
-                ->where('product_flat.locale', $locale)
-                ->orderBy('product_id', 'desc');
+                         ->addSelect('product_flat.*')
+                         ->where('product_flat.status', 1)
+                         ->where('product_flat.visible_individually', 1)
+                         ->where('product_flat.new', 1)
+                         ->where('product_flat.channel', $channel)
+                         ->where('product_flat.locale', $locale)
+                         ->orderBy('product_id', 'desc');
         })->paginate($count);
 
         return $results;
@@ -112,22 +112,19 @@ class ProductRepository extends Repository
             }
 
             $query = $query->distinct()
-                ->addSelect('product_flat.*')
-                ->leftJoin('products', 'product_flat.product_id', '=', 'products.id')
-                ->leftJoin('product_categories', 'products.id', '=', 'product_categories.product_id')
-                ->where('product_flat.status', 1)
-                ->where('product_flat.visible_individually', 1)
-                ->where('product_flat.channel', $channel)
-                ->where('product_flat.locale', $locale)
-                ->whereNotNull('product_flat.url_key');
+                           ->addSelect('product_flat.*')
+                           ->leftJoin('products', 'product_flat.product_id', '=', 'products.id')
+                           ->leftJoin('product_categories', 'products.id', '=', 'product_categories.product_id')
+                           ->where('product_flat.status', 1)
+                           ->where('product_flat.visible_individually', 1)
+                           ->where('product_flat.channel', $channel)
+                           ->where('product_flat.locale', $locale)
+                           ->whereNotNull('product_flat.url_key');
 
             if ($term)
                 $query->where('product_flat.name', 'like', '%' . urldecode($term) . '%');
 
-            if (
-                $categoryId
-                && $categoryId !== ""
-            ) {
+            if ($categoryId && $categoryId !== "") {
                 $query = $query->where('product_categories.category_id', $categoryId);
             }
 
@@ -179,7 +176,7 @@ class ProductRepository extends Repository
                                 });
                             } else {
                                 $query2->where('product_flat.min_price', '>=', core()->convertToBasePrice(current($temp)))
-                                    ->where('product_flat.min_price', '<=', core()->convertToBasePrice(end($temp)));
+                                       ->where('product_flat.min_price', '<=', core()->convertToBasePrice(end($temp)));
                             }
                         }
                     });

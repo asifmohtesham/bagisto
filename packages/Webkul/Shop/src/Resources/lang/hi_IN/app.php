@@ -375,9 +375,7 @@ return [
                 'share-wishlist'       => 'शेयर विशलिस्ट',
                 'wishlist-sharing'     => 'विशलिस्ट शेयरिंग',
                 'shared-link'          => 'साझा लिंक',
-                'copy'                 => 'प्रतिलिपि',
-                'copy-link'            => 'प्रतिरूप जोड़ना',
-                'copied'               => 'कॉपी किया गया!',
+                'copy'                 => 'Copy',
                 'visibility'           => 'दृश्यता',
                 'public'               => 'जनता',
                 'private'              => 'निजी',
@@ -505,8 +503,8 @@ return [
             'proceed-to-checkout'       => 'चेक आउट करने के लिए आगे बढ़ें',
             'remove'                    => 'निकालना',
             'remove-link'               => 'निकालना',
-            'remove-all-items'          => 'सभी आइटम हटाएं',
-            'confirm-action'            => 'इस क्रिया की पुष्टि करें?',
+            'remove-all-items'          => 'Remove all items',
+            'confirm-action'            => 'Confirm this action?',
             'move-to-wishlist'          => 'इच्छा सूची की ओर बदें',
             'move-to-wishlist-success'  => 'आइटम सफलतापूर्वक इच्छा सूची में ले जाया गया।',
             'move-to-wishlist-error'    => 'आइटम को इच्छा सूची में नहीं ले जाया जा सकता, कृपया बाद में पुन: प्रयास करें।',
@@ -522,7 +520,7 @@ return [
                 'error_remove'   => 'कार्ट से निकालने के लिए कोई आइटम नहीं है।',
                 'success'        => 'आइटम सफलतापूर्वक कार्ट में जोड़ा गया।',
                 'success-remove' => 'आइटम कार्ट से सफलतापूर्वक हटा दिया गया है।',
-                'success-all-remove' => 'कार्ट से सभी आइटम सफलतापूर्वक निकाल दिए गए हैं.',
+                'success-all-remove' => 'All items is successfully removed from the cart.',
                 'error-add'      => 'आइटम कार्ट में नहीं जोड़ा जा सकता, कृपया बाद में पुन: प्रयास करें।',
                 'inactive'       => 'एक आइटम निष्क्रिय है और उसे कार्ट से निकाल दिया गया था।',
                 'inactive-add'   => 'निष्क्रिय आइटम कार्ट में नहीं जोड़ा जा सकता है।',
@@ -533,7 +531,7 @@ return [
             'partial-cart-update'       => 'केवल कुछ उत्पाद अपडेट किए गए थे',
             'link-missing'              => '',
             'event'                     => [
-                'expired' => 'इस घटना की समय सीमा समाप्त हो गई है.',
+                'expired' => 'This event has been expired.',
             ],
             'minimum-order-message'     => 'न्यूनतम आदेश राशि है: राशि',
             'suspended-account-message' => 'आपका खाता निरस्त कर दिया गया है।',
@@ -541,7 +539,6 @@ return [
             'check-billing-address'     => 'कृपया बिलिंग पता जांचें।',
             'specify-shipping-method'   => 'कृपया शिपिंग विधि निर्दिष्ट करें।',
             'specify-payment-method'    => 'कृपया भुगतान विधि निर्दिष्ट करें।',
-            'rule-applied'              => 'Cart rule applied',
         ],
 
         'onepage' => [
@@ -571,14 +568,6 @@ return [
             'shipping-method'     => 'जलयात्रा पद्धति का चयन करें',
             'payment-methods'     => 'भुगतान का तरीका चुनें',
             'payment-method'      => 'भुगतान विधि',
-            'payment-method-name' => [
-                'PayPal Smart Button' => 'पेपाल स्मार्ट बटन',
-                'PayPal'              => 'पेपाल',
-                'Cash On Delivery'    => 'डिलवरी पर नकदी',               
-                'Money Transfer'      => 'मनी ट्रांसफर',        
-                'PayPal Standard'     => 'पेपैल मानक'
-                
-            ],
             'summary'             => 'आदेश सारांश',
             'price'               => 'कीमत',
             'quantity'            => 'मात्रा',
@@ -622,7 +611,6 @@ return [
             'invalid-coupon'      => 'कूपन कोड अमान्य है।',
             'success-coupon'      => 'कूपन कोड सफलतापूर्वक लागू किया गया।',
             'coupon-apply-issue'  => 'कूपन कोड लागू नहीं किया जा सकता',
-            'coupon-already-applied' => 'कूपन कोड पहले से ही लागू है।',
         ],
 
         'success' => [

@@ -40,14 +40,14 @@ class Booking extends Virtual
     /**
      * Create a new product type instance.
      *
-     * @param  \Webkul\Attribute\Repositories\AttributeRepository  $attributeRepository
-     * @param  \Webkul\Product\Repositories\ProductRepository  $productRepository
-     * @param  \Webkul\Product\Repositories\ProductAttributeValueRepository  $attributeValueRepository
-     * @param  \Webkul\Product\Repositories\ProductInventoryRepository  $productInventoryRepository
-     * @param  \Webkul\Product\Repositories\ProductImageRepository  $productImageRepository
+     * @param  \Webkul\Attribute\Repositories\AttributeRepository           $attributeRepository
+     * @param  \Webkul\Product\Repositories\ProductRepository               $productRepository
+     * @param  \Webkul\Product\Repositories\ProductAttributeValueRepository $attributeValueRepository
+     * @param  \Webkul\Product\Repositories\ProductInventoryRepository      $productInventoryRepository
+     * @param  \Webkul\Product\Repositories\ProductImageRepository          $productImageRepository
      * @param  \Webkul\BookingProduct\Repositories\BookingProductRepository  $bookingProductRepository
-     * @param  \Webkul\BookingProduct\Helpers\BookingHelper  $bookingHelper
-     * @param  \Webkul\Product\Repositories\ProductVideoRepository  $productVideoRepository
+     * @param  \Webkul\BookingProduct\Helpers\BookingHelper                  $bookingHelper
+     * @param \Webkul\Product\Repositories\ProductVideoRepository            $productVideoRepository
      * @return void
      */
     public function __construct(
@@ -161,10 +161,7 @@ class Booking extends Virtual
      */
     public function prepareForCart($data)
     {
-        if (
-            ! isset($data['booking'])
-            || ! count($data['booking'])
-        ) {
+        if (! isset($data['booking']) || ! count($data['booking'])) {
             return trans('shop::app.checkout.cart.integrity.missing_options');
         }
 
@@ -173,10 +170,7 @@ class Booking extends Virtual
         $bookingProduct = $this->getBookingProduct($data['product_id']);
 
         if ($bookingProduct->type == 'event') {
-            if (
-                Carbon::now() > $bookingProduct->available_from
-                && Carbon::now() > $bookingProduct->available_to
-            ) {
+            if (Carbon::now() > $bookingProduct->available_from && Carbon::now() > $bookingProduct->available_to) {
                 return trans('shop::app.checkout.cart.event.expired');
             }
 
@@ -231,12 +225,10 @@ class Booking extends Virtual
             return false;
         }
 
-        if (
-            isset($options1['booking'], $options2['booking'])
+        if (isset($options1['booking'], $options2['booking'])
             && isset($options1['booking']['ticket_id'], $options2['booking']['ticket_id'])
-            && $options1['booking']['ticket_id'] === $options2['booking']['ticket_id']
-        ) {
-            return true;
+            && $options1['booking']['ticket_id'] === $options2['booking']['ticket_id']) {
+                return true;
         }
 
         return false;

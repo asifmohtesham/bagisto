@@ -523,7 +523,6 @@ return [
                 'invoice-missing'   => 'This invoice id does not exist',
                 'transaction-saved' => 'The transaction has been saved',
                 'already-paid'      => 'This invoice has already been paid',
-                'transaction-amount-exceeds' => 'The specified amount of this transaction exceeds the total amount of the invoice.',
             ],
         ],
     ],
@@ -543,10 +542,10 @@ return [
                 'bundle'                        => 'pakaĵo',
                 'downloadable'                  => 'elŝutebla',
                 'grouped'                       => 'grupigitaj',
-                'virtual'                       => 'virtuala',
+                'virtual'                       => 'virtuala',            
                 'configurable'                  => 'agordebla',
 
-            ],
+            ], 
             'simple'                        => 'Simple',
             'configurable'                  => 'Configurable',
             'familiy'                       => 'Familia de atributos',
@@ -621,11 +620,6 @@ return [
             'save'                          => 'Save',
             'cancel'                        => 'Cancel',
             'saved-inventory-message'       => 'Product inventory saved successfully.',
-            'validations'                   => [
-                'quantity-required' => 'Quantity is required.',
-                'quantity-integer'  => 'Quantity should be integer.',
-                'quantity-min-zero' => 'Quantity should be greater then zero.',
-            ],
         ],
 
         'attributes' => [
@@ -742,8 +736,6 @@ return [
         'yes'            => 'Sí',
         'no'             => 'No',
         'delete'         => 'Borrar',
-        'enable-atleast-one-shipping' => 'Habilite al menos un método de envío.',
-        'enable-atleast-one-payment'  => 'Habilite al menos un método de pago.',
 
         'tax-categories' => [
             'title'           => 'Categorías de impuestos',

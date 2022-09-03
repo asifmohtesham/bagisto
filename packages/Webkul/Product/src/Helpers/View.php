@@ -38,21 +38,18 @@ class View extends AbstractProduct
                             continue;
                         }
                     }
-                } elseif (
-                    $attribute->type == 'multiselect'
-                    || $attribute->type == 'checkbox'
-                ) {
-                    $labels = [];
+                } elseif ($attribute->type == 'multiselect' || $attribute->type == 'checkbox') {
+                    $lables = [];
 
                     $attributeOptions = $attributeOptionReposotory->findWhereIn('id', explode(",", $value));
 
                     foreach ($attributeOptions as $attributeOption) {
                         if ($label = $attributeOption->label) {
-                            $labels[] = $label;
+                            $lables[] = $label;
                         }
                     }
 
-                    $value = implode(", ", $labels);
+                    $value = implode(", ", $lables);
                 }
             }
 

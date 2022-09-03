@@ -2,6 +2,7 @@
 
 namespace Webkul\Customer\Repositories;
 
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Core\Eloquent\Repository;
 use Webkul\Sales\Models\Order;
@@ -11,11 +12,45 @@ class CustomerRepository extends Repository
     /**
      * Specify model class name.
      *
-     * @return string
+     * @return mixed
      */
-    public function model(): string
+    public function model()
     {
-        return 'Webkul\Customer\Contracts\Customer';
+        return \Webkul\Customer\Contracts\Customer::class;
+    }
+
+    /**
+     * Create customer.
+     *
+     * @param  array  $attributes
+     * @return mixed
+     */
+    public function create($attributes)
+    {
+        Event::dispatch('customer.registration.before');
+
+        $customer = parent::create($attributes);
+
+        Event::dispatch('customer.registration.after', $customer);
+
+        return $customer;
+    }
+
+    /**
+     * Update customer.
+     *
+     * @param  array  $attributes
+     * @return mixed
+     */
+    public function update(array $attributes, $id)
+    {
+        Event::dispatch('customer.update.before');
+
+        $customer = parent::update($attributes, $id);
+
+        Event::dispatch('customer.update.after', $customer);
+
+        return $customer;
     }
 
     /**

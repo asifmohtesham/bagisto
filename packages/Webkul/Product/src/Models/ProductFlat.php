@@ -41,6 +41,13 @@ class ProductFlat extends Model implements ProductFlatContract
     ];
 
     /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var boolean
+     */
+    public $timestamps = false;
+
+    /**
      * Get the index name for the model.
      *
      * @return string
@@ -68,13 +75,7 @@ class ProductFlat extends Model implements ProductFlatContract
                 ->getSingletonInstance(AttributeRepository::class)
                 ->getAttributeByCode($key);
 
-            if (
-                $attribute
-                && (
-                    $attribute->value_per_channel
-                    || $attribute->value_per_locale
-                )
-            ) {
+            if ($attribute && ($attribute->value_per_channel || $attribute->value_per_locale)) {
                 $defaultProduct = $this->getDefaultProduct();
 
                 $this->attributes[$key] = $defaultProduct->attributes[$key];
@@ -137,6 +138,16 @@ class ProductFlat extends Model implements ProductFlatContract
     }
 
     /**
+     * Get all of the attributes for the attribute groups.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getImagesAttribute()
+    {
+        return $this->images()->get();
+    }
+
+    /**
      * The images that belong to the product.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -154,7 +165,18 @@ class ProductFlat extends Model implements ProductFlatContract
      */
     public function videos()
     {
-        return $this->product->videos()->orderBy('position');
+        return $this->product->videos()
+            ->orderBy('position');
+    }
+
+    /**
+     * Get all of the reviews for the attribute groups.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getReviewsAttribute()
+    {
+        return $this->reviews()->get();
     }
 
     /**

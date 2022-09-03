@@ -52,10 +52,7 @@ class Ipn
         }
 
         try {
-            if (
-                isset($this->post['txn_type'])
-                && 'recurring_payment' == $this->post['txn_type']
-            ) {
+            if (isset($this->post['txn_type']) && 'recurring_payment' == $this->post['txn_type']) {
 
             } else {
                 $this->getOrder();

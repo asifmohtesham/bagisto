@@ -48,9 +48,9 @@ return [
                 'price' => 'السعر',
                 'quantity' => 'كمية',
                 'description' => 'وصف',
-                'special-price' => 'سعر خاص',
-                'special-price-from' => 'صالح من تاريخ',
-                'special-price-to' => 'صالح حتى',
+                'special-price' => 'Special Price',
+                'special-price-from' => 'Valid From',
+                'special-price-to' => 'Valid Until',
                 'charged-per' => 'اتهم لكل',
                 'guest' => 'زائر',
                 'table' => 'الطاولة',
@@ -64,7 +64,7 @@ return [
                 'status' => 'الحالة',
                 'open' => 'افتح',
                 'close' => 'غلق',
-                'time-error' => 'يجب أن يكون وقت إلى وقت أكبر من وقت من وقت.'
+                'time-error' => 'The to time must be greater than the from time.'
             ]
         ],
 
@@ -101,7 +101,7 @@ return [
             'book-an-appointment' => 'حجز موعد',
             'date' => 'تاريخ',
             'slot' => 'فتحة',
-            'no-slots-available' => 'لا توجد فترات زمنية متاحة',
+            'no-slots-available' => 'No slots available',
             'rent-an-item' => 'استئجار عنصر',
             'choose-rent-option' => 'اختر خيار الإيجار',
             'daily-basis' => 'الأساس اليومي',

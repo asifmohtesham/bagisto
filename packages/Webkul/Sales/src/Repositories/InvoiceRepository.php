@@ -2,10 +2,11 @@
 
 namespace Webkul\Sales\Repositories;
 
-use Illuminate\Container\Container;
+use Illuminate\Container\Container as App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Webkul\Core\Eloquent\Repository;
+use Webkul\Sales\Contracts\Invoice;
 use Webkul\Sales\Generators\InvoiceSequencer;
 
 class InvoiceRepository extends Repository
@@ -17,7 +18,7 @@ class InvoiceRepository extends Repository
      * @param  \Webkul\Sales\Repositories\OrderItemRepository  $orderItemRepository
      * @param  \Webkul\Sales\Repositories\InvoiceItemRepository  $invoiceItemRepository
      * @param  \Webkul\Sales\Repositories\DownloadableLinkPurchasedRepository  $downloadableLinkPurchasedRepository
-     * @param  \Illuminate\Container\Container  $container
+     * @param  \Illuminate\Container\Container  $app
      * @return void
      */
     public function __construct(
@@ -25,10 +26,10 @@ class InvoiceRepository extends Repository
         protected OrderItemRepository $orderItemRepository,
         protected InvoiceItemRepository $invoiceItemRepository,
         protected DownloadableLinkPurchasedRepository $downloadableLinkPurchasedRepository,
-        Container $container
+        App $app
     )
     {
-        parent::__construct($container);
+        parent::__construct($app);
     }
 
     /**
@@ -36,9 +37,9 @@ class InvoiceRepository extends Repository
      *
      * @return string
      */
-    public function model(): string
+    public function model()
     {
-        return 'Webkul\Sales\Contracts\Invoice';
+        return Invoice::class;
     }
 
     /**

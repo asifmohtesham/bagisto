@@ -2,13 +2,14 @@
 
 namespace Webkul\Admin\Http\Controllers\Customer;
 
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Mail;
+use Mail;
 use Webkul\Admin\DataGrids\CustomerDataGrid;
 use Webkul\Admin\DataGrids\CustomerOrderDataGrid;
 use Webkul\Admin\DataGrids\CustomersInvoicesDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Mail\NewCustomerNotification;
+use Webkul\Core\Repositories\ChannelRepository;
+use Webkul\Customer\Repositories\CustomerAddressRepository;
 use Webkul\Customer\Repositories\CustomerGroupRepository;
 use Webkul\Customer\Repositories\CustomerRepository;
 
@@ -25,11 +26,15 @@ class CustomerController extends Controller
      * Create a new controller instance.
      *
      * @param \Webkul\Customer\Repositories\CustomerRepository  $customerRepository
+     * @param  \Webkul\Customer\Repositories\CustomerAddressRepository  $customerAddressRepository
      * @param \Webkul\Customer\Repositories\CustomerGroupRepository  $customerGroupRepository
+     * @param \Webkul\Core\Repositories\ChannelRepository  $channelRepository
      */
     public function __construct(
         protected CustomerRepository $customerRepository,
-        protected CustomerGroupRepository $customerGroupRepository
+        protected CustomerAddressRepository $customerAddressRepository,
+        protected CustomerGroupRepository $customerGroupRepository,
+        protected ChannelRepository $channelRepository
     )
     {
         $this->_config = request('_config');
@@ -56,9 +61,11 @@ class CustomerController extends Controller
      */
     public function create()
     {
-        $groups = $this->customerGroupRepository->findWhere([['code', '<>', 'guest']]);
+        $customerGroup = $this->customerGroupRepository->findWhere([['code', '<>', 'guest']]);
 
-        return view($this->_config['view'], compact('groups'));
+        $channelName = $this->channelRepository->all();
+
+        return view($this->_config['view'], compact('customerGroup', 'channelName'));
     }
 
     /**
@@ -76,20 +83,18 @@ class CustomerController extends Controller
             'date_of_birth' => 'date|before:today',
         ]);
 
+        $data = request()->all();
+
         $password = rand(100000, 10000000);
 
-        Event::dispatch('customer.registration.before');
+        $data['password'] = bcrypt($password);
 
-        $customer = $this->customerRepository->create(array_merge(request()->all() , [
-            'password'    => bcrypt($password),
-            'is_verified' => 1,
-        ]));
+        $data['is_verified'] = 1;
 
-        Event::dispatch('customer.registration.after', $customer);
+        $customer = $this->customerRepository->create($data);
 
         try {
             $configKey = 'emails.general.notifications.emails.general.notifications.customer';
-
             if (core()->getConfigData($configKey)) {
                 Mail::queue(new NewCustomerNotification($customer, $password));
             }
@@ -111,10 +116,11 @@ class CustomerController extends Controller
     public function edit($id)
     {
         $customer = $this->customerRepository->findOrFail($id);
+        $address = $this->customerAddressRepository->find($id);
+        $customerGroup = $this->customerGroupRepository->findWhere([['code', '<>', 'guest']]);
+        $channelName = $this->channelRepository->all();
 
-        $groups = $this->customerGroupRepository->findWhere([['code', '<>', 'guest']]);
-
-        return view($this->_config['view'], compact('customer', 'groups'));
+        return view($this->_config['view'], compact('customer', 'address', 'customerGroup', 'channelName'));
     }
 
     /**
@@ -133,14 +139,13 @@ class CustomerController extends Controller
             'date_of_birth' => 'date|before:today',
         ]);
 
-        Event::dispatch('customer.update.before', $id);
-        
-        $customer = $this->customerRepository->update(array_merge(request()->all(), [
-            'status'       => request()->has('status'),
-            'is_suspended' => request()->has('is_suspended'),
-        ]), $id);
+        $data = request()->all();
 
-        Event::dispatch('customer.update.after', $customer);
+        $data['status'] = ! isset($data['status']) ? 0 : 1;
+
+        $data['is_suspended'] = ! isset($data['is_suspended']) ? 0 : 1;
+
+        $this->customerRepository->update($data, $id);
 
         session()->flash('success', trans('admin::app.response.update-success', ['name' => 'Customer']));
 
@@ -194,15 +199,15 @@ class CustomerController extends Controller
             'notes' => 'string|nullable',
         ]);
 
-        Event::dispatch('customer.update.before', request()->input('_customer'));
+        $customer = $this->customerRepository->find(request()->input('_customer'));
 
-        $customer = $this->customerRepository->update([
-            'notes' => request()->input('notes'),
-        ], request()->input('_customer'));
+        $noteTaken = $customer->update(['notes' => request()->input('notes')]);
 
-        Event::dispatch('customer.update.after', $customer);
-
-        session()->flash('success', 'Note taken');
+        if ($noteTaken) {
+            session()->flash('success', 'Note taken');
+        } else {
+            session()->flash('error', 'Note cannot be taken');
+        }
 
         return redirect()->route($this->_config['redirect']);
     }
@@ -215,17 +220,12 @@ class CustomerController extends Controller
     public function massUpdate()
     {
         $customerIds = explode(',', request()->input('indexes'));
-
         $updateOption = request()->input('update-options');
 
         foreach ($customerIds as $customerId) {
-            Event::dispatch('customer.update.before', $customerId);
+            $customer = $this->customerRepository->find($customerId);
 
-            $customer = $this->customerRepository->update([
-                'status' => $updateOption,
-            ], $customerId);
-
-            Event::dispatch('customer.update.after', $customer);
+            $customer->update(['status' => $updateOption]);
         }
 
         session()->flash('success', trans('admin::app.customers.customers.mass-update-success'));
@@ -243,12 +243,9 @@ class CustomerController extends Controller
         $customerIds = explode(',', request()->input('indexes'));
 
         if (! $this->customerRepository->checkBulkCustomerIfTheyHaveOrderPendingOrProcessing($customerIds)) {
-            foreach ($customerIds as $customerId) {
-                Event::dispatch('customer.delete.before', $customerId);
-                
-                $this->customerRepository->delete($customerId);
 
-                Event::dispatch('customer.delete.after', $customerId);
+            foreach ($customerIds as $customerId) {
+                $this->customerRepository->deleteWhere(['id' => $customerId]);
             }
 
             session()->flash('success', trans('admin::app.customers.customers.mass-destroy-success'));
@@ -257,7 +254,6 @@ class CustomerController extends Controller
         }
 
         session()->flash('error', trans('admin::app.response.order-pending', ['name' => 'Customers']));
-
         return redirect()->back();
     }
 

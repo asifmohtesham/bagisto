@@ -13,11 +13,11 @@ class CurrencyRepository extends Repository
     /**
      * Specify model class name.
      *
-     * @return string
+     * @return mixed
      */
-    public function model(): string
+    public function model()
     {
-        return 'Webkul\Core\Contracts\Currency';
+        return \Webkul\Core\Contracts\Currency::class;
     }
 
     /**

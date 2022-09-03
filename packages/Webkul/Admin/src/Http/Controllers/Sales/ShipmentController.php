@@ -96,9 +96,7 @@ class ShipmentController extends Controller
             return redirect()->back();
         }
 
-        $this->shipmentRepository->create(array_merge($data, [
-            'order_id' => $orderId,
-        ]));
+        $this->shipmentRepository->create(array_merge($data, ['order_id' => $orderId]));
 
         session()->flash('success', trans('admin::app.response.create-success', ['name' => 'Shipment']));
 
@@ -143,10 +141,7 @@ class ShipmentController extends Controller
                             ->where('inventory_source_id', $inventorySourceId)
                             ->sum('qty');
 
-                        if (
-                            $child->qty_to_ship < $finalQty
-                            || $availableQty < $finalQty
-                        ) {
+                        if ($child->qty_to_ship < $finalQty || $availableQty < $finalQty) {
                             return false;
                         }
                     }
@@ -155,10 +150,7 @@ class ShipmentController extends Controller
                         ->where('inventory_source_id', $inventorySourceId)
                         ->sum('qty');
 
-                    if (
-                        $orderItem->qty_to_ship < $qty
-                        || $availableQty < $qty
-                    ) {
+                    if ($orderItem->qty_to_ship < $qty || $availableQty < $qty) {
                         return false;
                     }
                 }

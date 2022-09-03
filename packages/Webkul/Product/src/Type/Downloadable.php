@@ -124,10 +124,8 @@ class Downloadable extends AbstractType
             return false;
         }
 
-        if (
-            is_callable(config('products.isSaleable'))
-            && call_user_func(config('products.isSaleable'), $this->product) === false
-        ) {
+        if (is_callable(config('products.isSaleable')) &&
+            call_user_func(config('products.isSaleable'), $this->product) === false) {
             return false;
         }
 
@@ -163,10 +161,7 @@ class Downloadable extends AbstractType
      */
     public function prepareForCart($data)
     {
-        if (
-            ! isset($data['links'])
-            || ! count($data['links'])
-        ) {
+        if (! isset($data['links']) || ! count($data['links'])) {
             return trans('shop::app.checkout.cart.integrity.missing_links');
         }
 
@@ -199,10 +194,7 @@ class Downloadable extends AbstractType
             return false;
         }
 
-        if (
-            isset($options1['links'])
-            && isset($options2['links'])
-        ) {
+        if (isset($options1['links']) && isset($options2['links'])) {
             return $options1['links'] === $options2['links'];
         }
 
@@ -288,7 +280,7 @@ class Downloadable extends AbstractType
      *
      * @return float
      */
-    public function getMaximumPrice()
+    public function getMaximamPrice()
     {
         return $this->product->price;
     }

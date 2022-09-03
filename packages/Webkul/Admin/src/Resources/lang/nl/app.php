@@ -516,7 +516,6 @@ return [
                 'invoice-missing'   => 'Dit factuurnummer bestaat niet',
                 'transaction-saved' => 'De transactie is geregistreerd',
                 'already-paid'      => 'Dit factuur is al voldaan',
-                'transaction-amount-exceeds' => 'Het opgegeven bedrag van deze transactie overschrijdt het totaalbedrag van de factuur.',
             ],
         ],
     ],
@@ -602,11 +601,6 @@ return [
             'save'                          => 'Save',
             'cancel'                        => 'Cancel',
             'saved-inventory-message'       => 'Product inventory saved successfully.',
-            'validations'                   => [
-                'quantity-required' => 'Quantity is required.',
-                'quantity-integer'  => 'Quantity should be integer.',
-                'quantity-min-zero' => 'Quantity should be greater then zero.',
-            ],
         ],
 
         'attributes' => [
@@ -724,8 +718,6 @@ return [
         'yes'            => 'Ja',
         'no'             => 'Nee',
         'delete'         => 'Verwijder',
-        'enable-atleast-one-shipping' => 'Schakel ten minste één verzendmethode in.',
-        'enable-atleast-one-payment'  => 'Schakel ten minste één betaalmethode in.',
 
         'tax-categories' => [
             'title'           => 'BTW categorieën',
@@ -1292,7 +1284,7 @@ return [
             'create-success' => 'Sitemap created successfully.',
             'update-success' => 'Sitemap updated successfully.',
             'delete-success' => 'Sitemap deleted successfully.',
-        ],
+        ]
     ],
 
     'error' => [

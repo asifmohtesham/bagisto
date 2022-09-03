@@ -61,11 +61,7 @@ class ReviewController extends Controller
      */
     public function update($id)
     {
-        Event::dispatch('customer.review.update.before', $id);
-
-        $review = $this->productReviewRepository->update(request()->all(), $id);
-
-        Event::dispatch('customer.review.update.after', $review);
+        $this->productReviewRepository->update(request()->all(), $id);
 
         session()->flash('success', trans('admin::app.response.update-success', ['name' => 'Review']));
 
@@ -83,11 +79,7 @@ class ReviewController extends Controller
         $this->productReviewRepository->findOrFail($id);
 
         try {
-            Event::dispatch('customer.review.delete.before', $id);
-
             $this->productReviewRepository->delete($id);
-
-            Event::dispatch('customer.review.delete.after', $id);
 
             return response()->json(['message' => trans('admin::app.response.delete-success', ['name' => 'Review'])]);
         } catch (\Exception $e) {
@@ -107,15 +99,13 @@ class ReviewController extends Controller
         $suppressFlash = false;
 
         if (request()->isMethod('post')) {
+            $data = request()->all();
+
             $indexes = explode(',', request()->input('indexes'));
 
-            foreach ($indexes as $index) {
+            foreach ($indexes as $key => $value) {
                 try {
-                    Event::dispatch('customer.review.delete.before', $index);
-
-                    $this->productReviewRepository->delete($index);
-
-                    Event::dispatch('customer.review.delete.after', $index);
+                    $this->productReviewRepository->delete($value);
                 } catch (\Exception $e) {
                     $suppressFlash = true;
 
@@ -153,7 +143,7 @@ class ReviewController extends Controller
             $indexes = explode(',', request()->input('indexes'));
 
             foreach ($indexes as $key => $value) {
-                $review = $this->productReviewRepository->find($value);
+                $review = $this->productReviewRepository->findOneByField('id', $value);
 
                 try {
                     if (! isset($data['massaction-type'])) {

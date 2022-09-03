@@ -106,10 +106,7 @@
                     </div>
                 </accordian>
 
-                @if (
-                    $order->billing_address
-                    || $order->shipping_address
-                )
+                @if ($order->billing_address || $order->shipping_address)
                     <accordian title="{{ __('admin::app.sales.orders.address') }}" :active="true">
                         <div slot="body">
                             <div class="sale">
@@ -202,10 +199,7 @@
                                         </span>
                                     </div>
 
-                                    @if (
-                                        $shipment->inventory_source
-                                        || $shipment->inventory_source_name
-                                    )
+                                    @if ($shipment->inventory_source || $shipment->inventory_source_name)
                                         <div class="row">
                                             <span class="title">
                                                 {{ __('admin::app.sales.shipments.inventory-source') }}

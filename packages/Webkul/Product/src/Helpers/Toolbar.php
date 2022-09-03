@@ -5,7 +5,7 @@ namespace Webkul\Product\Helpers;
 class Toolbar extends AbstractProduct
 {
     /**
-     * Returns available sort orders.
+     * Returns available sort orders
      *
      * @return array
      */
@@ -21,7 +21,7 @@ class Toolbar extends AbstractProduct
         ];
     }
     /**
-     * Returns available limits.
+     * Returns available limits
      *
      * @return array
      */
@@ -37,9 +37,9 @@ class Toolbar extends AbstractProduct
     }
 
     /**
-     * Returns the sort order url.
+     * Returns the sort order url
      *
-     * @param  string  $key
+     * @param  string $key
      * @return string
      */
     public function getOrderUrl($key)
@@ -53,7 +53,7 @@ class Toolbar extends AbstractProduct
     }
 
     /**
-     * Returns the limit url.
+     * Returns the limit url
      *
      * @param  int  $limit
      * @return string
@@ -66,9 +66,9 @@ class Toolbar extends AbstractProduct
     }
 
     /**
-     * Returns the mode url.
+     * Returns the mode url
      *
-     * @param  string  $mode
+     * @param  string $mode
      * @return string
      */
     public function getModeUrl($mode)
@@ -79,7 +79,7 @@ class Toolbar extends AbstractProduct
     }
 
     /**
-     * Checks if sort order is active.
+     * Checks if sort order is active
      *
      * @param  string $key
      * @return bool
@@ -89,15 +89,12 @@ class Toolbar extends AbstractProduct
         $params = request()->input();
         $orderDirection = $params['order'] ?? 'asc';
 
-        if (
-            isset($params['sort'])
-            && $key == $params['sort'] . '-' . $orderDirection
-        ) {
+        if (isset($params['sort']) && $key == $params['sort'] . '-' . $orderDirection) {
             return true;
         } elseif (! isset($params['sort'])) {
             $sortBy = core()->getConfigData('catalog.products.storefront.sort_by')
-                ? core()->getConfigData('catalog.products.storefront.sort_by')
-                : 'name-desc';
+                   ? core()->getConfigData('catalog.products.storefront.sort_by')
+                   : 'name-desc';
 
             if ($key == $sortBy) {
                 return true;
@@ -108,7 +105,7 @@ class Toolbar extends AbstractProduct
     }
 
     /**
-     * Checks if limit is active.
+     * Checks if limit is active
      *
      * @param  int  $limit
      * @return bool
@@ -125,7 +122,7 @@ class Toolbar extends AbstractProduct
     }
 
     /**
-     * Checks if mode is active.
+     * Checks if mode is active
      *
      * @param  string  $key
      * @return bool
@@ -135,18 +132,12 @@ class Toolbar extends AbstractProduct
         $params = request()->input();
 
         $defaultMode = core()->getConfigData('catalog.products.storefront.mode')
-            ? core()->getConfigData('catalog.products.storefront.mode')
-            : 'grid';
+        ? core()->getConfigData('catalog.products.storefront.mode')
+        : 'grid';
 
-        if (
-            request()->input() == null
-            && $key == $defaultMode
-        ) {
+        if (request()->input() == null && $key == $defaultMode) {
             return true;
-        } elseif (
-            isset($params['mode'])
-            && $key == $params['mode']
-        ) {
+        } else if (isset($params['mode']) && $key == $params['mode']) {
             return true;
         }
 
@@ -154,7 +145,7 @@ class Toolbar extends AbstractProduct
     }
 
     /**
-     * Returns the current mode.
+     * Returns the current mode
      *
      * @return string
      */
@@ -167,12 +158,12 @@ class Toolbar extends AbstractProduct
         }
 
         return core()->getConfigData('catalog.products.storefront.mode')
-            ? core()->getConfigData('catalog.products.storefront.mode')
-            : 'grid';
+               ? core()->getConfigData('catalog.products.storefront.mode')
+               : 'grid';
     }
 
     /**
-     * Returns the view option if mode is set by param then it will overwrite default one and return new mode.
+     * Returns the view option if mode is set by param then it will overwrite default one and return new mode
      *
      * @return string
      */
@@ -204,10 +195,12 @@ class Toolbar extends AbstractProduct
      */
     public function fullUrlWithQuery($additionalQuery)
     {
-        $requestQuery = array_merge(request()->query(), $additionalQuery);
+        $queryString = request()->getQueryString();
 
-        $queryString = http_build_query($requestQuery);
+        $additionalQueryString = http_build_query($additionalQuery);
 
-        return url()->current() . '?' . $queryString;
+        return $queryString
+            ? url()->current() . '?' . $queryString . '&' . $additionalQueryString
+            : url()->current() . '?' . $additionalQueryString;
     }
 }

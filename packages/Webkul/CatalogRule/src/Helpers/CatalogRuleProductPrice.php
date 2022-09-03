@@ -48,10 +48,7 @@ class CatalogRuleProductPrice
         foreach ($catalogRuleProducts as $row) {
             $productKey = $row->product_id . '-' . $row->channel_id . '-' . $row->customer_group_id;
 
-            if (
-                $previousKey
-                && $previousKey != $productKey
-            ) {
+            if ($previousKey && $previousKey != $productKey) {
                 $endRuleFlags = [];
 
                 if (count($prices) > $batchCount) {
@@ -62,15 +59,8 @@ class CatalogRuleProductPrice
             }
 
             foreach ($dates as $key => $date) {
-                if (
-                    (
-                        ! $row->starts_from
-                        || $date >= $row->starts_from
-                    )
-                    && (
-                        ! $row->ends_till
-                        || $date <= $row->ends_till
-                    )
+                if ((! $row->starts_from || $date >= $row->starts_from)
+                    && (! $row->ends_till || $date <= $row->ends_till)
                 ) {
                     $priceKey = $date->getTimestamp() . '-' . $productKey;
 

@@ -5,7 +5,7 @@
            <i class="icon notification-icon active" style="margin-left:0px"></i>
        </div>
 
-       <div class="dropdown-list bottom-right notification" ref="dropdownList">
+       <div class="dropdown-list bottom-right notification">
            <div class="dropdown-container">
                <ul class="notif">
                    <div id="notif-title">{{ title }}</div>
@@ -132,38 +132,34 @@ export default {
                 read: 0
             };
 
-            let self = this;
+            let this_this = this;
 
             this.$http.get(this.getNotificationUrl, {
                     params: params
                 })
                 .then(function (response) {
-                    self.notifications = response.data.search_results.data;
-                    self.totalUnRead = response.data.total_unread;
+                    this_this.notifications = response.data.search_results.data;
+                    this_this.totalUnRead = response.data.total_unread;
                 })
                 .catch(function (error) {})
         },
-
         readAll: function () {
-            let self = this;
-            let dropdownList = this.$refs.dropdownList;
+            let this_this = this;
 
             this.$http.post(this.getReadAllUrl)
                 .then(function (response) {
-                    self.notifications = response.data.search_results.data;
+                    this_this.notifications = response.data.search_results.data;
 
-                    self.totalUnRead = response.data.total_unread;
+                    this_this.totalUnRead = response.data.total_unread;
 
                     window.flashMessages.push({
                         'type': 'alert-success',
                         'message': response.data.success_message
                     });
 
-                    self.$root.addFlashMessages();
+                    this_this.$root.addFlashMessages();
                 })
                 .catch(function (error) {})
-                
-                dropdownList.style.display = "none";
         }
     }
 }

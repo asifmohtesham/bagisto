@@ -204,7 +204,7 @@ class ProductDataGrid extends DataGrid
             'closure'    => function ($value) {
                 $html = '';
 
-                if ($value->status) {
+                if ($value->status == 1) {
                     $html .= '<span class="badge badge-md badge-success">' . trans('admin::app.datagrid.active') . '</span>';
                 } else {
                     $html .= '<span class="badge badge-md badge-danger">' . trans('admin::app.datagrid.inactive') . '</span>';

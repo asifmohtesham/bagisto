@@ -86,7 +86,7 @@ class CartRuleCouponsDataGrid extends DataGrid
             'sortable'   => true,
             'filterable' => true,
             'closure'    => function ($value) {
-                if ($value->end_other_rules) {
+                if ($value->end_other_rules == 1) {
                     return trans('admin::app.datagrid.true');
                 } else {
                     return trans('admin::app.datagrid.false');

@@ -151,16 +151,14 @@ class Bundle extends AbstractType
         foreach ($this->product->bundle_options as $option) {
             $optionProductsPrices = $this->getOptionProductsPrices($option);
 
-            if (! count($optionProductsPrices)) {
-                continue;
-            }
+            if (count($optionProductsPrices)) {
+                $selectionMinPrice = min($optionProductsPrices);
 
-            $selectionMinPrice = min($optionProductsPrices);
-
-            if ($option->is_required) {
-                $minPrice += $selectionMinPrice;
-            } elseif (! $haveRequiredOptions) {
-                $minPrices[] = $selectionMinPrice;
+                if ($option->is_required) {
+                    $minPrice += $selectionMinPrice;
+                } elseif (! $haveRequiredOptions) {
+                    $minPrices[] = $selectionMinPrice;
+                }
             }
         }
 
@@ -187,23 +185,18 @@ class Bundle extends AbstractType
         foreach ($this->product->bundle_options as $option) {
             $optionProductsPrices = $this->getOptionProductsPrices($option, false);
 
-            if (! count($optionProductsPrices)) {
-                continue;
-            }
+            if (count($optionProductsPrices)) {
+                $selectionMinPrice = min($optionProductsPrices);
 
-            $selectionMinPrice = min($optionProductsPrices);
-
-            if ($option->is_required) {
-                $minPrice += $selectionMinPrice;
-            } elseif (! $haveRequiredOptions) {
-                $minPrices[] = $selectionMinPrice;
+                if ($option->is_required) {
+                    $minPrice += $selectionMinPrice;
+                } elseif (! $haveRequiredOptions) {
+                    $minPrices[] = $selectionMinPrice;
+                }
             }
         }
 
-        if (
-            ! $haveRequiredOptions
-            && count($minPrices)
-        ) {
+        if (! $haveRequiredOptions && count($minPrices)) {
             $minPrice = min($minPrices);
         }
 
@@ -257,7 +250,7 @@ class Bundle extends AbstractType
      *
      * @return float
      */
-    public function getMaximumPrice()
+    public function getMaximamPrice()
     {
         $optionPrices = [];
 
@@ -294,7 +287,7 @@ class Bundle extends AbstractType
      *
      * @return float
      */
-    public function getRegularMaximumPrice()
+    public function getRegularMaximamPrice()
     {
         $optionPrices = [];
 
@@ -358,11 +351,11 @@ class Bundle extends AbstractType
 
             'to' => [
                 'regular_price' => [
-                    'price'          => core()->convertPrice($this->evaluatePrice($regularMaximumPrice = $this->getRegularMaximumPrice())),
+                    'price'          => core()->convertPrice($this->evaluatePrice($regularMaximumPrice = $this->getRegularMaximamPrice())),
                     'formated_price' => core()->currency($this->evaluatePrice($regularMaximumPrice)),
                 ],
                 'final_price'   => [
-                    'price'          => core()->convertPrice($this->evaluatePrice($maximumPrice = $this->getMaximumPrice())),
+                    'price'          => core()->convertPrice($this->evaluatePrice($maximumPrice = $this->getMaximamPrice())),
                     'formated_price' => core()->currency($this->evaluatePrice($maximumPrice)),
                 ],
             ],
@@ -381,7 +374,6 @@ class Bundle extends AbstractType
             foreach ($option->bundle_option_products as $index => $bundleOptionProduct) {
                 if ($bundleOptionProduct->product->getTypeInstance()->haveSpecialPrice()) {
                     $haveSpecialPrice = true;
-
                     break;
                 }
             }
@@ -439,16 +431,13 @@ class Bundle extends AbstractType
      */
     public function prepareForCart($data)
     {
-        $bundleQuantity = parent::handleQuantity((int) $data['quantity']);
+        $bundleQuantity = $data['quantity'];
 
         if (isset($data['bundle_options'])) {
             $data['bundle_options'] = array_filter($this->validateBundleOptionForCart($data['bundle_options']));
         }
 
-        if (
-            ! isset($data['bundle_options'])
-            || ! count($data['bundle_options'])
-        ) {
+        if (! isset($data['bundle_options']) || ! count($data['bundle_options'])) {
             return trans('shop::app.checkout.cart.integrity.missing_options');
         }
 
@@ -548,17 +537,11 @@ class Bundle extends AbstractType
      */
     public function compareOptions($options1, $options2)
     {
-        if (
-            isset($options2['product_id'])
-            && $this->product->id != $options2['product_id']
-        ) {
+        if (isset($options2['product_id']) && $this->product->id != $options2['product_id']) {
             return false;
         }
 
-        if (
-            isset($options1['bundle_options'])
-            && isset($options2['bundle_options'])
-        ) {
+        if (isset($options1['bundle_options']) && isset($options2['bundle_options'])) {
             return $options1['bundle_options'] == $options2['bundle_options'] && $options1['bundle_option_qty'] == $this->getOptionQuantities($options2);
         }
 
@@ -760,7 +743,6 @@ class Bundle extends AbstractType
                         continue 2;
                     }
                 }
-
                 # if any required option does not have any in-stock product option we will get here.
                 return false;
             }

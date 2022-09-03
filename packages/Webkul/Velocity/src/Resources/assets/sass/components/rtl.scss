@@ -178,14 +178,6 @@ body {
                     float: right;
                     margin-left: 20px;
                 }
-
-                .wishlist-icon {
-                    padding: 0px !important;
-                }
-
-                .product-information {
-                    margin-right: 1%;
-                }
             }
         }
 
@@ -348,10 +340,6 @@ body {
                     float: left;
                 }
 
-                form {
-                    float: left;
-                }
-
                 .wishlist-icon {
                     float: left;
                 }
@@ -392,7 +380,7 @@ body {
 
         .compare-products {
             .wishlist-icon {
-                left: 30px;
+                left: 52px;
                 right: unset;
             }
 
@@ -583,18 +571,6 @@ body {
             .VueCarousel-navigation {
                 left: 12px;
                 right: unset;
-            }
-        }
-
-        #date-of-birth {
-            .cross-icon {
-                right: unset;
-                left: 34px;
-            }
-            
-            &:after {
-                right: unset;
-                left: 8px;
             }
         }
     }

@@ -2,11 +2,12 @@
 
 namespace Webkul\Sales\Repositories;
 
-use Illuminate\Container\Container;
+use Illuminate\Container\Container as App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Webkul\Core\Eloquent\Repository;
+use Webkul\Sales\Contracts\Order;
 use Webkul\Sales\Generators\OrderSequencer;
 use Webkul\Sales\Models\Order as OrderModel;
 
@@ -17,16 +18,16 @@ class OrderRepository extends Repository
      *
      * @param  \Webkul\Sales\Repositories\OrderItemRepository  $orderItemRepository
      * @param  \Webkul\Sales\Repositories\DownloadableLinkPurchasedRepository  $downloadableLinkPurchasedRepository
-     * @param  \Illuminate\Container\Container  $container
+     * @param  \Illuminate\Container\Container  $app
      * @return void
      */
     public function __construct(
         protected OrderItemRepository $orderItemRepository,
         protected DownloadableLinkPurchasedRepository $downloadableLinkPurchasedRepository,
-        Container $container
+        App $app
     )
     {
-        parent::__construct($container);
+        parent::__construct($app);
     }
 
     /**
@@ -34,9 +35,9 @@ class OrderRepository extends Repository
      *
      * @return string
      */
-    public function model(): string
+    public function model()
     {
-        return 'Webkul\Sales\Contracts\Order';
+        return Order::class;
     }
 
     /**
@@ -51,20 +52,14 @@ class OrderRepository extends Repository
         try {
             Event::dispatch('checkout.order.save.before', [$data]);
 
-            if (
-                isset($data['customer'])
-                && $data['customer']
-            ) {
+            if (isset($data['customer']) && $data['customer']) {
                 $data['customer_id'] = $data['customer']->id;
                 $data['customer_type'] = get_class($data['customer']);
             } else {
                 unset($data['customer']);
             }
 
-            if (
-                isset($data['channel'])
-                && $data['channel']
-            ) {
+            if (isset($data['channel']) && $data['channel']) {
                 $data['channel_id'] = $data['channel']->id;
                 $data['channel_type'] = get_class($data['channel']);
                 $data['channel_name'] = $data['channel']->name;
@@ -93,10 +88,7 @@ class OrderRepository extends Repository
 
                 $orderItem = $this->orderItemRepository->create(array_merge($item, ['order_id' => $order->id]));
 
-                if (
-                    isset($item['children'])
-                    && $item['children']
-                ) {
+                if (isset($item['children']) && $item['children']) {
                     foreach ($item['children'] as $child) {
                         $this->orderItemRepository->create(array_merge($child, ['order_id' => $order->id, 'parent_id' => $orderItem->id]));
                     }
@@ -183,10 +175,7 @@ class OrderRepository extends Repository
                     $orderItem->qty_canceled += $orderItem->qty_to_cancel;
                     $orderItem->save();
 
-                    if (
-                        $orderItem->parent
-                        && $orderItem->parent->qty_ordered
-                    ) {
+                    if ($orderItem->parent && $orderItem->parent->qty_ordered) {
                         $orderItem->parent->qty_canceled += $orderItem->parent->qty_to_cancel;
                         $orderItem->parent->save();
                     }
@@ -252,10 +241,7 @@ class OrderRepository extends Repository
          * If order is already completed and total quantity ordered is not equal to refunded
          * then it can be considered as completed.
          */
-        if (
-            $order->status === OrderModel::STATUS_COMPLETED
-            && $totalQtyOrdered != $totalQtyRefunded
-        ) {
+        if ($order->status === OrderModel::STATUS_COMPLETED && $totalQtyOrdered != $totalQtyRefunded) {
             return true;
         }
 

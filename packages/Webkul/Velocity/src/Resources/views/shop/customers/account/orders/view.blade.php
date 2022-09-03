@@ -61,8 +61,8 @@
                     </div>
 
                     <div class="section-content">
-                    <div class="table-responsive">
-                            <table class="table">
+                        <div class="table">
+                            <table>
                                 <thead>
                                     <tr>
                                         <th>{{ __('shop::app.customer.account.order.view.SKU') }}</th>
@@ -513,19 +513,17 @@
         <div class="sale-section">
             <div class="section-content" style="border-bottom: 0">
                 <div class="order-box-container">
-                    @if ($order->billing_address)
-                        <div class="box">
-                            <div class="box-title">
-                                {{ __('shop::app.customer.account.order.view.billing-address') }}
-                            </div>
-
-                            <div class="box-content">
-                                @include ('admin::sales.address', ['address' => $order->billing_address])
-
-                                {!! view_render_event('bagisto.shop.customers.account.orders.view.billing-address.after', ['order' => $order]) !!}
-                            </div>
+                    <div class="box">
+                        <div class="box-title">
+                            {{ __('shop::app.customer.account.order.view.billing-address') }}
                         </div>
-                    @endif
+
+                        <div class="box-content">
+                            @include ('admin::sales.address', ['address' => $order->billing_address])
+
+                            {!! view_render_event('bagisto.shop.customers.account.orders.view.billing-address.after', ['order' => $order]) !!}
+                        </div>
+                    </div>
 
                     @if ($order->shipping_address)
                         <div class="box">

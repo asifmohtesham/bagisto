@@ -200,6 +200,8 @@ abstract class DataGrid
     public function __construct()
     {
         $this->invoker = $this;
+
+        $this->currentUser = auth()->guard('admin')->user();
     }
 
     /**

@@ -26,6 +26,7 @@ class CustomerResetPassword extends ResetPassword
             ->view('shop::emails.customer.forget-password', [
                 'user_name' => $notifiable->name,
                 'token'     => $this->token,
-            ]);
+                ]
+            );
     }
 }

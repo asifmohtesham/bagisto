@@ -2,7 +2,6 @@
 
 namespace Webkul\Marketing\Http\Controllers;
 
-use Illuminate\Support\Facades\Event;
 use Webkul\Admin\DataGrids\EmailTemplateDataGrid;
 use Webkul\Marketing\Repositories\TemplateRepository;
 
@@ -63,11 +62,7 @@ class TemplateController extends Controller
             'content' => 'required',
         ]);
 
-        Event::dispatch('marketing.templates.create.before');
-
-        $template = $this->templateRepository->create(request()->all());
-
-        Event::dispatch('marketing.templates.create.after', $template);
+        $this->templateRepository->create(request()->all());
 
         session()->flash('success', trans('admin::app.marketing.templates.create-success'));
 
@@ -101,11 +96,7 @@ class TemplateController extends Controller
             'content' => 'required',
         ]);
 
-        Event::dispatch('marketing.templates.update.before', $id);
-
-        $template = $this->templateRepository->update(request()->all(), $id);
-
-        Event::dispatch('marketing.templates.update.after', $template);
+        $this->templateRepository->update(request()->all(), $id);
 
         session()->flash('success', trans('admin::app.marketing.templates.update-success'));
 
@@ -123,11 +114,7 @@ class TemplateController extends Controller
         $this->templateRepository->findOrFail($id);
 
         try {
-            Event::dispatch('marketing.templates.delete.before', $id);
-
             $this->templateRepository->delete($id);
-
-            Event::dispatch('marketing.templates.delete.after', $id);
 
             return response()->json(['message' => trans('admin::app.marketing.templates.delete-success')]);
         } catch (\Exception $e) {}

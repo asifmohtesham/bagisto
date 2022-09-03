@@ -537,7 +537,6 @@ return [
             'check-billing-address'     => 'කරුණාකර බිල්පත් ලිපිනය පරීක්ෂා කරන්න.',
             'specify-shipping-method'   => 'කරුණාකර නැව්ගත කිරීමේ ක්‍රමය සඳහන් කරන්න.',
             'specify-payment-method'    => 'කරුණාකර ගෙවීමේ ක්‍රමය සඳහන් කරන්න.',
-            'rule-applied'              => 'Cart rule applied',
         ],
 
         'onepage' => [
@@ -610,7 +609,6 @@ return [
             'invalid-coupon'      => 'කූපන් කේතය වලංගු නැත.',
             'success-coupon'      => 'කූපන් කේතය සාර්ථකව යොදන ලදී.',
             'coupon-apply-issue'  => 'කූපන් කේතය යෙදිය නොහැක.',
-            'coupon-already-applied' => 'Coupon code already applied.',
         ],
 
         'success' => [

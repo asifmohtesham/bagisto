@@ -76,18 +76,11 @@
                 .then(function (response) {
                     let data = response.data;
 
-                    $(`#inventoryErrors${productId}`).text('');
-
                     $(`#edit-product-${productId}-quantity-form-block`).hide();
 
                     $(`#product-${productId}-quantity-anchor`).text(data.updatedTotal);
 
                     $(`#product-${productId}-quantity`).show();
-                })
-                .catch(function ({ response }) {
-                    let { data } = response;
-
-                    $(`#inventoryErrors${productId}`).text(data.message);
                 });
         }
     </script>

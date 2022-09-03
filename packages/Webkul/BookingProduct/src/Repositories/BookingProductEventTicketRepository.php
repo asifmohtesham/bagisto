@@ -11,16 +11,17 @@ class BookingProductEventTicketRepository extends Repository
     /**
      * Specify Model class name
      *
-     * @return string
+     * @return mixed
      */
-    function model(): string
+    function model()
     {
         return 'Webkul\BookingProduct\Contracts\BookingProductEventTicket';
     }
 
     /**
-     * @param  array  $data
-     * @param  \Webkul\BookingProduct\Contracts\BookingProduct  $bookingProduct
+     * @param array                                           $data
+     * @param \Webkul\BookingProduct\Contracts\BookingProduct $bookingProduct
+     *
      * @return void
      * @throws \Prettus\Validator\Exceptions\ValidatorException
      */

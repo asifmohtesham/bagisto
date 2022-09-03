@@ -367,9 +367,7 @@ return [
                 'wishlist-sharing'     => 'Wishlist Sharing',
                 'shared-link'          => 'Shared Link',
                 'copy'                 => 'Copy',
-                'copy-link'            => 'Link de cópia',
-                'copied'               => 'Copiado!',
-                'visibility'           => 'Visibilidade',
+                'visibility'           => 'Visibility',
                 'public'               => 'Public',
                 'private'              => 'Private',
                 'enable'               => 'Enable',
@@ -495,8 +493,8 @@ return [
             'proceed-to-checkout'      => 'Finalizar Compra',
             'remove'                   => 'Remover',
             'remove-link'              => 'Remover',
-            'remove-all-items'         => 'Remover todos os itens',
-            'confirm-action'           => 'Confirme esta ação?',
+            'remove-all-items'         => 'Remove all items',
+            'confirm-action'           => 'Confirm this action?',
             'move-to-wishlist'         => 'Mover para Lista de Desejos',
             'move-to-wishlist-success' => 'Item Movido para Lista de Desejos',
             'move-to-wishlist-error'   => 'Não foi possivel Mover Item para Lista de Desejos, Por favor, tente novamente mais tarde',
@@ -513,7 +511,7 @@ return [
                 'error_remove'   => 'Nenhum item para remover do carrinho',
                 'success'        => 'Item foi adicionado com sucesso ao carrinho',
                 'success-remove' => 'Item foi removido com sucesso do carrinho',
-                'success-all-remove' => 'Todos os itens foram removidos com sucesso do carrinho.',
+                'success-all-remove' => 'All items is successfully removed from the cart.',
                 'error-add'      => 'Item não pode ser adicionado ao carrinho, por favor, tente novamente mais tarde',
                 'inactive'       => 'An item is inactive and was removed from cart',
                 'inactive-add'   => 'Inactive item cannot be added to cart',
@@ -532,7 +530,6 @@ return [
             'check-billing-address'     => 'Please check billing address.',
             'specify-shipping-method'   => 'Please specify shipping method.',
             'specify-payment-method'    => 'Please specify payment method.',
-            'rule-applied'              => 'Cart rule applied',
         ],
 
         'onepage' => [
@@ -562,13 +559,6 @@ return [
             'shipping-method'   => 'Selecione o Método de Entrega',
             'payment-methods'   => 'Selecione o Método de Pagamento',
             'payment-method'    => 'Método de Pagamento',
-            'payment-method-name' => [
-                'PayPal Smart Button' => 'Botão Inteligente do PayPal',
-                'PayPal'              => 'PayPal',
-                'Cash On Delivery'    => 'Dinheiro na entrega',          
-                'Money Transfer'      => 'Transferência de dinheiro',        
-                'Paypal Standard'     => 'Padrão do PayPal'
-            ],
             'summary'           => 'Resumo do Pedido',
             'price'             => 'Preço',
             'quantity'          => 'Quantidade',
@@ -599,7 +589,6 @@ return [
             'invalid-coupon'      => 'Código do Cupom é inválido.',
             'success-coupon'      => 'Cupom aplicado com sucesso.',
             'coupon-apply-issue'  => 'Não foi possível aplicar esse Cupom',
-            'coupon-already-applied' => 'Coupon code already applied.',
         ],
 
         'success' => [

@@ -84,7 +84,7 @@ class ContentDataGrid extends DataGrid
             'searchable' => false,
             'filterable' => true,
             'closure'    => function ($value) {
-                if ($value->status) {
+                if ($value->status == 1) {
                     return 'Active';
                 } else {
                     return 'Inactive';

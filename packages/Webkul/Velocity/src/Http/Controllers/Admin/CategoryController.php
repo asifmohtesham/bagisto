@@ -22,7 +22,6 @@ class CategoryController extends Controller
     {
         $this->_config = request('_config');
     }
-    
     /**
      * Display a listing of the resource.
      *

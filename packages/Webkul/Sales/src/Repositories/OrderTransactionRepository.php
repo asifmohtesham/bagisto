@@ -3,6 +3,7 @@
 namespace Webkul\Sales\Repositories;
 
 use Webkul\Core\Eloquent\Repository;
+use Webkul\Sales\Contracts\OrderTransaction;
 
 /**
  * Order Transaction Repository
@@ -17,8 +18,9 @@ class OrderTransactionRepository extends Repository
      *
      * @return string
      */
-    function model(): string
+
+    function model()
     {
-        return 'Webkul\Sales\Contracts\OrderTransaction';
+        return OrderTransaction::class;
     }
 }

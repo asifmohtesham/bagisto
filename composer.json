@@ -8,13 +8,14 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": "^8.1",
+        "php": "^8.0.2",
+        "algolia/algoliasearch-client-php": "^3.3",
         "astrotomic/laravel-translatable": "^11.0.0",
         "bagisto/legacy-api": "^1.0",
         "bagisto/rest-api": "dev-master",
         "bagistobrasil/bagisto-product-social-share": "^0.1.2",
         "barryvdh/laravel-debugbar": "^3.1",
-        "barryvdh/laravel-dompdf": "^2.0.0",
+        "barryvdh/laravel-dompdf": "^1.0.0",
         "diglactic/laravel-breadcrumbs": "^7.0",
         "doctrine/dbal": "^2.9",
         "enshrined/svg-sanitize": "^0.15.0",
@@ -139,16 +140,14 @@
             "@php artisan migrate:fresh --env=testing",
             "vendor/bin/codecept run unit",
             "vendor/bin/codecept run functional",
-            "vendor/bin/codecept run trigger",
-            "vendor/bin/codecept run api"
+            "vendor/bin/codecept run trigger"
         ],
         "test-win": [
             "@set -e",
             "@php artisan migrate:fresh --env=testing",
             "vendor\\bin\\codecept.bat run unit",
             "vendor\\bin\\codecept.bat run functional",
-            "vendor\\bin\\codecept.bat run trigger",
-            "vendor\\bin\\codecept.bat run api"
+            "vendor\\bin\\codecept.bat run trigger"
         ]
     },
     "config": {

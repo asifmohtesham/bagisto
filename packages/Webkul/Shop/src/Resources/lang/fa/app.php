@@ -534,12 +534,10 @@ return [
             ],
             'minimum-order-message'     => 'حداقل مقدار سفارش است :amount',
             'suspended-account-message' => 'Your account has been suspended.',
-            'inactive-account-message' =>  'Your account has been inactive.',
             'check-shipping-address'    => 'Please check shipping address.',
             'check-billing-address'     => 'Please check billing address.',
             'specify-shipping-method'   => 'Please specify shipping method.',
             'specify-payment-method'    => 'Please specify payment method.',
-            'rule-applied'              => 'Cart rule applied',
         ],
 
         'onepage' => [
@@ -610,7 +608,6 @@ return [
             'invalid-coupon'      => 'کد کوپن نامعتبر است',
             'success-coupon'      => 'کد کوپن با موفقیت اعمال شد',
             'coupon-apply-issue'  => 'کد کوپن نمی تواند اعمال شود',
-            'coupon-already-applied' => 'کد کوپن قبلاً اعمال شده است.',
         ],
 
         'success' => [

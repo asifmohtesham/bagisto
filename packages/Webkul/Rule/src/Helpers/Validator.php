@@ -22,25 +22,17 @@ class Validator
         $validConditionCount = $totalConditionCount = 0;
 
         foreach ($rule->conditions as $condition) {
-            if (
-                ! $condition['attribute']
-                || ! isset($condition['value'])
-                || is_null($condition['value'])
-                ||  $condition['value'] == ''
-            ) {
+            if (! $condition['attribute'] || ! isset($condition['value']) || is_null($condition['value']) ||  $condition['value'] == '') {
                 continue;
             }
 
-            if (
-                $entity instanceof \Webkul\Checkout\Contracts\Cart
-                && strpos($condition['attribute'], 'cart|') === false
-            ) {
+            if ($entity instanceof \Webkul\Checkout\Contracts\Cart && strpos($condition['attribute'], 'cart|') === false) {
                 continue;
             }
 
             $totalConditionCount++;
 
-            if ($rule->condition_type) {
+            if ($rule->condition_type == 1) {
                 if (! $this->validateObject($condition, $entity)) {
                     return false;
                 } else {
@@ -53,7 +45,7 @@ class Validator
             }
         }
 
-        return $validConditionCount == $totalConditionCount;
+        return $validConditionCount == $totalConditionCount ? true : false;
     }
 
     /**
@@ -105,14 +97,14 @@ class Validator
             case 'product':
                 if ($attributeCode == 'category_ids') {
                     $value = $entity->product
-                        ? $entity->product->categories()->pluck('id')->toArray()
-                        : $entity->categories()->pluck('id')->toArray();
+                             ? $entity->product->categories()->pluck('id')->toArray()
+                             : $entity->categories()->pluck('id')->toArray();
 
                     return $value;
                 } else {
                     $value = $entity->product
-                        ? $entity->product->{$attributeCode}
-                        : $entity->{$attributeCode};
+                             ? $entity->product->{$attributeCode}
+                              : $entity->{$attributeCode};
 
                     if (! in_array($condition['attribute_type'], ['multiselect', 'checkbox'])) {
                         return $value;
@@ -228,10 +220,7 @@ class Validator
                 break;
 
             case '{}': case '!{}':
-                if (
-                    is_scalar($attributeValue)
-                    && is_array($condition['value'])
-                ) {
+                if (is_scalar($attributeValue) && is_array($condition['value'])) {
                     foreach ($condition['value'] as $item) {
                         if (stripos($attributeValue, $item) !== false) {
                             $result = true;
@@ -278,15 +267,12 @@ class Validator
         }
         
         foreach ($attributeValue as $subValue) {
-            if (! is_array($subValue)) {
-                continue;
-            }
-
-            if (self::validateArrayValues($subValue, $conditionValue) === true) {
-                return true;
+            if (is_array($subValue)) {
+                if (self::validateArrayValues($subValue, $conditionValue) === true) {
+                    return true;
+                }
             }
         }
-
         return false;
     }
 }

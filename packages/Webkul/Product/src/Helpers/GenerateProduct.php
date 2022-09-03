@@ -60,6 +60,7 @@ class GenerateProduct
         $brand = Attribute::where(['code' => 'brand'])->first();
 
         if (! AttributeOption::where(['attribute_id' => $brand->id])->exists()) {
+
             AttributeOption::create([
                 'admin_name'   => 'Webkul Demo Brand (c) 2020',
                 'attribute_id' => $brand->id,
@@ -97,8 +98,7 @@ class GenerateProduct
 
         foreach ($attributes as $attribute) {
             if ($attribute->type == 'text') {
-                if (
-                    $attribute->code == 'width'
+                if ($attribute->code == 'width'
                     || $attribute->code == 'height'
                     || $attribute->code == 'depth'
                     || $attribute->code == 'weight'
@@ -114,10 +114,7 @@ class GenerateProduct
             } elseif ($attribute->type == 'textarea') {
                 $data[$attribute->code] = $faker->text;
 
-                if (
-                    $attribute->code == 'description'
-                    || $attribute->code == 'short_description'
-                ) {
+                if ($attribute->code == 'description' || $attribute->code == 'short_description') {
                     $data[$attribute->code] = '<p>' . $data[$attribute->code] . '</p>';
                 }
             } elseif ($attribute->type == 'boolean') {
@@ -134,13 +131,7 @@ class GenerateProduct
                 } else {
                     $data[$attribute->code] = $date->toDateString();
                 }
-            } elseif (
-                $attribute->code != 'tax_category_id'
-                && (
-                    $attribute->type == 'select'
-                    || $attribute->type == 'multiselect'
-                )
-            ) {
+            } elseif ($attribute->code != 'tax_category_id' && ($attribute->type == 'select' || $attribute->type == 'multiselect')) {
                 $options = $attribute->options;
 
                 if ($attribute->type == 'select') {

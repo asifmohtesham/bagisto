@@ -10,10 +10,16 @@ use Webkul\Product\Repositories\ProductFlatRepository;
 use Webkul\Product\Repositories\ProductAttributeValueRepository;
 use Webkul\Product\Helpers\ProductType;
 use Webkul\Product\Models\ProductAttributeValue;
-use Webkul\Core\Repositories\ChannelRepository;
 
 class ProductFlat
 {
+    /**
+     * Attribute Object
+     *
+     * @var \Webkul\Attribute\Contracts\Attribute
+     */
+    protected $attribute;
+
     /**
      * Attribute codes that can be fill during flat creation.
      *
@@ -45,11 +51,6 @@ class ProductFlat
     ];
 
     /**
-     * @var array
-     */
-    protected $flatColumns = [];
-
-    /**
      * Create a new listener instance.
      *
      * @param  \Webkul\Attribute\Repositories\AttributeRepository  $attributeRepository
@@ -65,7 +66,6 @@ class ProductFlat
         protected ProductAttributeValueRepository $productAttributeValueRepository
     )
     {
-        $this->flatColumns = Schema::getColumnListing('product_flat');
     }
 
     /**
@@ -82,24 +82,18 @@ class ProductFlat
 
         if (! $attribute->use_in_flat) {
             $this->afterAttributeDeleted($attribute->id);
-
             return false;
         }
 
-        if (in_array($attribute->code, $this->flatColumns)) {
-            return;
+        if (! Schema::hasColumn('product_flat', $attribute->code)) {
+            Schema::table('product_flat', function (Blueprint $table) use($attribute) {
+                $table->{$this->attributeTypeFields[$attribute->type]}($attribute->code)->nullable();
+
+                if ($attribute->type == 'select' || $attribute->type == 'multiselect') {
+                    $table->string($attribute->code . '_label')->nullable();
+                }
+            });
         }
-
-        Schema::table('product_flat', function (Blueprint $table) use($attribute) {
-            $table->{$this->attributeTypeFields[$attribute->type]}($attribute->code)->nullable();
-
-            if (
-                $attribute->type == 'select'
-                || $attribute->type == 'multiselect'
-            ) {
-                $table->string($attribute->code . '_label')->nullable();
-            }
-        });
     }
 
     /**
@@ -111,23 +105,19 @@ class ProductFlat
     public function afterAttributeDeleted($attributeId)
     {
         $attribute = $this->attributeRepository->find($attributeId);
-        
-        if (! in_array(strtolower($attribute->code), $this->flatColumns)) {
-            return;
+
+        if (Schema::hasColumn('product_flat', strtolower($attribute->code))) {
+            Schema::table('product_flat', function (Blueprint $table) use($attribute) {
+                $table->dropColumn($attribute->code);
+
+                if ($attribute->type == 'select' || $attribute->type == 'multiselect') {
+                    $table->dropColumn($attribute->code . '_label');
+                }
+            });
+            
+            $this->productFlatRepository->updateAttributeColumn( $attribute , $this );
+            
         }
-
-        Schema::table('product_flat', function (Blueprint $table) use($attribute) {
-            $table->dropColumn($attribute->code);
-
-            if (
-                $attribute->type == 'select'
-                || $attribute->type == 'multiselect'
-            ) {
-                $table->dropColumn($attribute->code . '_label');
-            }
-        });
-        
-        $this->productFlatRepository->updateAttributeColumn( $attribute , $this);
     }
 
     /**
@@ -140,12 +130,10 @@ class ProductFlat
     {
         $this->createFlat($product);
 
-        if (! ProductType::hasVariants($product->type)) {
-            return;
-        }
-
-        foreach ($product->variants()->get() as $variant) {
-            $this->createFlat($variant, $product);
+        if (ProductType::hasVariants($product->type)) {
+            foreach ($product->variants()->get() as $variant) {
+                $this->createFlat($variant, $product);
+            }
         }
     }
 
@@ -162,82 +150,83 @@ class ProductFlat
 
         static $superAttributes = [];
 
-        if (! array_key_exists($product->attribute_family_id, $familyAttributes)) {
-            $familyAttributes[$product->attribute_family_id] = $product->attribute_family->custom_attributes;
+        if (! array_key_exists($product->attribute_family->id, $familyAttributes)) {
+            $familyAttributes[$product->attribute_family->id] = $product->attribute_family->custom_attributes;
         }
 
-        if (
-            $parentProduct
-            && ! array_key_exists($parentProduct->id, $superAttributes)
-        ) {
+        if ($parentProduct && ! array_key_exists($parentProduct->id, $superAttributes)) {
             $superAttributes[$parentProduct->id] = $parentProduct->super_attributes()->pluck('code')->toArray();
         }
 
         if (isset($product['channels'])) {
             foreach ($product['channels'] as $channel) {
-                $channels[] = $this->getChannel($channel)->code;
+                $channel = app('Webkul\Core\Repositories\ChannelRepository')->findOrFail($channel);
+                $channels[] = $channel['code'];
             }
         } elseif (isset($parentProduct['channels'])){
             foreach ($parentProduct['channels'] as $channel) {
-                $channels[] = $this->getChannel($channel)->code;
+                $channel = app('Webkul\Core\Repositories\ChannelRepository')->findOrFail($channel);
+                $channels[] = $channel['code'];
             }
         } else {
             $channels[] = core()->getDefaultChannelCode();
         }
 
-        $attributeValues = $product->attribute_values()->get();
-
         foreach (core()->getAllChannels() as $channel) {
             if (in_array($channel->code, $channels)) {
                 foreach ($channel->locales as $locale) {
-                    $productFlat = $this->productFlatRepository->updateOrCreate([
+                    $productFlat = $this->productFlatRepository->findOneWhere([
                         'product_id' => $product->id,
                         'channel'    => $channel->code,
                         'locale'     => $locale->code,
                     ]);
 
-                    foreach ($familyAttributes[$product->attribute_family_id] as $attribute) {
-                        if (
-                            (
-                                $parentProduct
-                                && ! in_array($attribute->code, array_merge($superAttributes[$parentProduct->id], $this->fillableAttributeCodes))
-                            )
-                            || in_array($attribute->code, ['tax_category_id'])
-                            || ! in_array($attribute->code, $this->flatColumns)
-                        ) {
+                    if (! $productFlat) {
+                        $productFlat = $this->productFlatRepository->create([
+                            'product_id' => $product->id,
+                            'channel'    => $channel->code,
+                            'locale'     => $locale->code,
+                        ]);
+                    }
+
+                    foreach ($familyAttributes[$product->attribute_family->id] as $attribute) {
+                        if ($parentProduct && ! in_array($attribute->code, array_merge($superAttributes[$parentProduct->id], $this->fillableAttributeCodes))) {
+                            continue;
+                        }
+
+                        if (in_array($attribute->code, ['tax_category_id'])) {
+                            continue;
+                        }
+
+                        if (! Schema::hasColumn('product_flat', $attribute->code)) {
                             continue;
                         }
 
                         if ($attribute->value_per_channel) {
                             if ($attribute->value_per_locale) {
-                                $productAttributeValue = $attributeValues
-                                    ->where('channel', $channel->code)
-                                    ->where('locale', $locale->code)
-                                    ->where('attribute_id', $attribute->id)
-                                    ->first();
+                                $productAttributeValue = $product->attribute_values()
+                                                                 ->where('channel', $channel->code)
+                                                                 ->where('locale', $locale->code)
+                                                                 ->where('attribute_id', $attribute->id)
+                                                                 ->first();
                             } else {
-                                $productAttributeValue = $attributeValues
-                                    ->where('channel', $channel->code)
-                                    ->where('attribute_id', $attribute->id)
-                                    ->first();
+                                $productAttributeValue = $product->attribute_values()
+                                                                 ->where('channel', $channel->code)
+                                                                 ->where('attribute_id', $attribute->id)
+                                                                 ->first();
                             }
                         } else {
                             if ($attribute->value_per_locale) {
-                                $productAttributeValue = $attributeValues
-                                    ->where('locale', $locale->code)
-                                    ->where('attribute_id', $attribute->id)
-                                    ->first();
+                                $productAttributeValue = $product->attribute_values()->where('locale', $locale->code)->where('attribute_id', $attribute->id)->first();
                             } else {
-                                $productAttributeValue = $attributeValues
-                                    ->where('attribute_id', $attribute->id)
-                                    ->first();
+                                $productAttributeValue = $product->attribute_values()->where('attribute_id', $attribute->id)->first();
                             }
                         }
 
                         $productFlat->{$attribute->code} = $productAttributeValue[ProductAttributeValue::$attributeTypeFields[$attribute->type]] ?? null;
 
                         if ($attribute->type == 'select') {
-                            $attributeOption = $this->getAttributeOptions($productFlat->{$attribute->code});
+                            $attributeOption = $this->attributeOptionRepository->find($product->{$attribute->code});
 
                             if ($attributeOption) {
                                 if ($attributeOptionTranslation = $attributeOption->translate($locale->code)) {
@@ -247,10 +236,10 @@ class ProductFlat
                                 }
                             }
                         } elseif ($attribute->type == 'multiselect') {
-                            $attributeOptionIds = explode(',', $productFlat->{$attribute->code});
+                            $attributeOptionIds = explode(',', $product->{$attribute->code});
 
                             if (count($attributeOptionIds)) {
-                                $attributeOptions = $this->getAttributeOptions($productFlat->{$attribute->code});
+                                $attributeOptions = $this->attributeOptionRepository->findWhereIn('id', $attributeOptionIds);
 
                                 $optionLabels = [];
 
@@ -267,16 +256,20 @@ class ProductFlat
                         }
                     }
 
+                    $productFlat->created_at = $product->created_at;
+
+                    $productFlat->updated_at = $product->updated_at;
+
                     $productFlat->min_price = $product->getTypeInstance()->getMinimalPrice();
 
-                    $productFlat->max_price = $product->getTypeInstance()->getMaximumPrice();
+                    $productFlat->max_price = $product->getTypeInstance()->getMaximamPrice();
 
                     if ($parentProduct) {
                         $parentProductFlat = $this->productFlatRepository->findOneWhere([
-                            'product_id' => $parentProduct->id,
-                            'channel'    => $channel->code,
-                            'locale'     => $locale->code,
-                        ]);
+                                'product_id' => $parentProduct->id,
+                                'channel'    => $channel->code,
+                                'locale'     => $locale->code,
+                            ]);
 
                         if ($parentProductFlat) {
                             $productFlat->parent_id = $parentProductFlat->id;
@@ -299,46 +292,6 @@ class ProductFlat
                     }
                 }
             }
-        }
-    }
-
-    /**
-     * @param  string  $id
-     * @return mixed
-     */
-    public function getChannel($id)
-    {
-        static $channels = [];
-
-        if (isset($channels[$id])) {
-            return $channels[$id];
-        }
-
-        return $channels[$id] = app(ChannelRepository::class)->findOrFail($id);
-    }
-
-    /**
-     * @param  string  $value
-     * @return mixed
-     */
-    public function getAttributeOptions($value)
-    {
-        if (! $value) {
-            return;
-        }
-
-        static $attributeOptions = [];
-
-        if (array_key_exists($value, $attributeOptions)) {
-            return $attributeOptions[$value];
-        }
-
-        if (is_numeric($value)) {
-            return $attributeOptions[$value] = $this->attributeOptionRepository->find($value);
-        } else {
-            $attributeOptionIds = explode(',', $value);
-            
-            return $attributeOptions[$value] = $this->attributeOptionRepository->findWhereIn('id', $attributeOptionIds);
         }
     }
 }

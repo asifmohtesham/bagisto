@@ -26,8 +26,7 @@ class ConfigurationForm extends FormRequest
     {
         $this->rules = [];
 
-        if (
-            request()->has('catalog.products.storefront.products_per_page')
+        if (request()->has('catalog.products.storefront.products_per_page')
             && ! empty(request()->input('catalog.products.storefront.products_per_page'))
         ) {
             $this->rules = [
@@ -35,8 +34,7 @@ class ConfigurationForm extends FormRequest
             ];
         }
 
-        if (
-            request()->has('general.design.admin_logo.logo_image')
+        if (request()->has('general.design.admin_logo.logo_image')
             && ! request()->input('general.design.admin_logo.logo_image.delete')
         ) {
             $this->rules = array_merge($this->rules, [
@@ -44,8 +42,7 @@ class ConfigurationForm extends FormRequest
             ]);
         }
 
-        if (
-            request()->has('general.design.admin_logo.favicon')
+        if (request()->has('general.design.admin_logo.favicon')
             && ! request()->input('general.design.admin_logo.favicon.delete')
         ) {
             $this->rules = array_merge($this->rules, [
@@ -53,8 +50,7 @@ class ConfigurationForm extends FormRequest
             ]);
         }
 
-        if (
-            request()->has('sales.invoice_setttings.invoice_slip_design.logo')
+        if (request()->has('sales.invoice_setttings.invoice_slip_design.logo')
             && ! request()->input('sales.invoice_setttings.invoice_slip_design.logo.delete')
         ) {
             $this->rules = array_merge($this->rules, [

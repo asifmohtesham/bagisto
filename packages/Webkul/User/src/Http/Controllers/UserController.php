@@ -70,20 +70,12 @@ class UserController extends Controller
     {
         $data = $request->all();
 
-        if (
-            isset($data['password'])
-            && $data['password']
-        ) {
+        if (isset($data['password']) && $data['password']) {
             $data['password'] = bcrypt($data['password']);
-
             $data['api_token'] = Str::random(80);
         }
 
-        Event::dispatch('user.admin.create.before');
-
-        $admin = $this->adminRepository->create($data);
-
-        Event::dispatch('user.admin.create.after', $admin);
+        $this->adminRepository->create($data);
 
         session()->flash('success', trans('admin::app.response.create-success', ['name' => 'User']));
 
@@ -120,18 +112,7 @@ class UserController extends Controller
             return $data;
         }
 
-        Event::dispatch('user.admin.update.before', $id);
-
-        $admin = $this->adminRepository->update($data, $id);
-
-        if (
-            isset($data['password'])
-            && $data['password']
-        ) {
-            Event::dispatch('user.admin.update-password', $admin);
-        }
-
-        Event::dispatch('user.admin.update.after', $admin);
+        $this->adminRepository->update($data, $id);
 
         session()->flash('success', trans('admin::app.response.update-success', ['name' => 'User']));
 
@@ -159,11 +140,7 @@ class UserController extends Controller
         }
 
         try {
-            Event::dispatch('user.admin.delete.before', $id);
-
             $this->adminRepository->delete($id);
-
-            Event::dispatch('user.admin.delete.after', $id);
 
             return response()->json(['message' => trans('admin::app.response.delete-success', ['name' => 'Admin'])]);
         } catch (\Exception $e) {}
@@ -241,9 +218,9 @@ class UserController extends Controller
         /**
          * Is user with `permission_type` all changed status.
          */
-        $data['status'] = isset($data['status']);
+        $data['status'] = isset($data['status']) ? 1 : 0;
 
-        $isStatusChangedToInactive = ! $data['status'] && (bool) $user->status;
+        $isStatusChangedToInactive = (int) $data['status'] === 0 && (int) $user->status === 1;
 
         if (
             $isStatusChangedToInactive
@@ -259,13 +236,10 @@ class UserController extends Controller
          * Is user with `permission_type` all role changed.
          */
         $isRoleChanged = $user->role->permission_type === 'all'
-            && isset($data['role_id'])
-            && (int) $data['role_id'] !== $user->role_id;
+        && isset($data['role_id'])
+        && (int) $data['role_id'] !== $user->role_id;
 
-        if (
-            $isRoleChanged
-            && $this->adminRepository->countAdminsWithAllAccess() === 1
-        ) {
+        if ($isRoleChanged && $this->adminRepository->countAdminsWithAllAccess() === 1) {
             return $this->cannotChangeRedirectResponse('role');
         }
 

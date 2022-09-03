@@ -54,10 +54,6 @@
                                 <div class="cart-item-list">
                                     @csrf
 
-                                    @php
-                                        $showUpdateCartButton = false;
-                                    @endphp
-
                                     @foreach ($cart->items as $key => $item)
                                         @php
                                             $productBaseImage = $item->product->getTypeInstance()->getBaseImage($item);
@@ -66,10 +62,6 @@
 
                                             $productPrice = $product->getTypeInstance()->getProductPrices();
 
-                                            if ($product->getTypeInstance()->showQuantityBox()) {
-                                                $showUpdateCartButton = true;
-                                            }
-                                                
                                             if (is_null ($product->url_key)) {
                                                 if (! is_null($product->parent)) {
                                                     $url_key = $product->parent->url_key;
@@ -131,10 +123,7 @@
                                                 <div class="no-padding col-12 cursor-pointer fs16 item-actions">
                                                     @auth('customer')
                                                         @if ($showWishlist)
-                                                            @if (
-                                                                $item->parent_id != 'null'
-                                                                || $item->parent_id != null
-                                                            )
+                                                            @if ($item->parent_id != 'null' || $item->parent_id != null)
                                                                 <div class="d-inline-block">
                                                                     @include('shop::products.wishlist', [
                                                                         'route' => route('shop.movetowishlist', $item->id),
@@ -214,7 +203,7 @@
                                         </button>
                                     </form>
 
-                                    @if ($showUpdateCartButton)
+                                    @if ($item->product->getTypeInstance()->showQuantityBox() === true)
                                         <button
                                             type="submit"
                                             class="theme-btn light unset">

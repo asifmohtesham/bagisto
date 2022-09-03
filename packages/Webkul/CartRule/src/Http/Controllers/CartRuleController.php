@@ -3,12 +3,10 @@
 namespace Webkul\CartRule\Http\Controllers;
 
 use Exception;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\CartRuleDataGrid;
-use Webkul\CartRule\Http\Requests\CartRuleRequest;
 use Webkul\CartRule\Repositories\CartRuleRepository;
 
 class CartRuleController extends Controller
@@ -93,18 +91,28 @@ class CartRuleController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * 
-     * @param  \Webkul\CartRule\Http\Requests\CartRuleRequest  $cartRuleRequest
+     *
      * @return \Illuminate\Http\Response
      */
-    public function store(CartRuleRequest $cartRuleRequest)
+    public function store()
     {
         try {
-            Event::dispatch('promotions.cart_rule.create.before');
+            $this->validate(request(), [
+                'name'                => 'required',
+                'channels'            => 'required|array|min:1',
+                'customer_groups'     => 'required|array|min:1',
+                'coupon_type'         => 'required',
+                'use_auto_generation' => 'required_if:coupon_type,==,1',
+                'coupon_code'         => 'required_if:use_auto_generation,==,0|unique:cart_rule_coupons,code',
+                'starts_from'         => 'nullable|date',
+                'ends_till'           => 'nullable|date|after_or_equal:starts_from',
+                'action_type'         => 'required',
+                'discount_amount'     => 'required|numeric',
+            ]);
 
-            $cartRule = $this->cartRuleRepository->create($cartRuleRequest->all());
+            $data = request()->all();
 
-            Event::dispatch('promotions.cart_rule.create.after', $cartRule);
+            $this->cartRuleRepository->create($data);
 
             session()->flash('success', trans('admin::app.response.create-success', ['name' => 'Cart Rule']));
 
@@ -134,13 +142,25 @@ class CartRuleController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Webkul\CartRule\Http\Requests\CartRuleRequest  $cartRuleRequest
+     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(CartRuleRequest $cartRuleRequest, $id)
+    public function update(Request $request, $id)
     {
         try {
+            $this->validate(request(), [
+                'name'                => 'required',
+                'channels'            => 'required|array|min:1',
+                'customer_groups'     => 'required|array|min:1',
+                'coupon_type'         => 'required',
+                'use_auto_generation' => 'required_if:coupon_type,==,1',
+                'starts_from'         => 'nullable|date',
+                'ends_till'           => 'nullable|date|after_or_equal:starts_from',
+                'action_type'         => 'required',
+                'discount_amount'     => 'required|numeric',
+            ]);
+
             $cartRule = $this->cartRuleRepository->findOrFail($id);
 
             if ($cartRule->coupon_type) {
@@ -155,11 +175,7 @@ class CartRuleController extends Controller
                 }
             }
 
-            Event::dispatch('promotions.cart_rule.update.before', $id);
-
-            $cartRule = $this->cartRuleRepository->update($cartRuleRequest->all(), $id);
-
-            Event::dispatch('promotions.cart_rule.update.after', $cartRule);
+            $cartRule = $this->cartRuleRepository->update(request()->all(), $id);
 
             session()->flash('success', trans('admin::app.response.update-success', ['name' => 'Cart Rule']));
 
@@ -184,11 +200,7 @@ class CartRuleController extends Controller
         $this->cartRuleRepository->findOrFail($id);
 
         try {
-            Event::dispatch('promotions.cart_rule.delete.before', $id);
-
             $this->cartRuleRepository->delete($id);
-
-            Event::dispatch('promotions.cart_rule.delete.after', $id);
 
             return response()->json(['message' => trans('admin::app.response.delete-success', ['name' => 'Cart Rule'])]);
         } catch (Exception $e) {}

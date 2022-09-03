@@ -9,9 +9,9 @@ class BookingProductRentalSlotRepository extends Repository
     /**
      * Specify Model class name
      *
-     * @return string
+     * @return mixed
      */
-    function model(): string
+    function model()
     {
         return 'Webkul\BookingProduct\Contracts\BookingProductRentalSlot';
     }

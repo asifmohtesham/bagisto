@@ -89,7 +89,7 @@ Route::group(['middleware' => ['web', 'admin'], 'prefix' => config('app.admin_ur
         ])->name('admin.sales.refunds.create');
 
         Route::post('/refunds/create/{order_id}', [RefundController::class, 'store'])->defaults('_config', [
-            'redirect' => 'admin.sales.refunds.index',
+            'redirect' => 'admin.sales.orders.view',
         ])->name('admin.sales.refunds.store');
 
         Route::post('/refunds/update-qty/{order_id}', [RefundController::class, 'updateQty'])->defaults('_config', [

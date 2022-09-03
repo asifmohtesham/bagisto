@@ -4,6 +4,7 @@ namespace Webkul\Category\Repositories;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Category\Models\CategoryTranslationProxy;
 use Webkul\Core\Eloquent\Repository;
@@ -13,11 +14,11 @@ class CategoryRepository extends Repository
     /**
      * Specify model class name.
      *
-     * @return string
+     * @return mixed
      */
-    public function model(): string
+    public function model()
     {
-        return 'Webkul\Category\Contracts\Category';
+        return \Webkul\Category\Contracts\Category::class;
     }
 
     /**
@@ -28,17 +29,15 @@ class CategoryRepository extends Repository
      */
     public function create(array $data)
     {
-        if (
-            isset($data['locale'])
-            && $data['locale'] == 'all'
-        ) {
+        Event::dispatch('catalog.category.create.before');
+
+        if (isset($data['locale']) && $data['locale'] == 'all') {
             $model = app()->make($this->model());
 
             foreach (core()->getAllLocales() as $locale) {
                 foreach ($model->translatedAttributes as $attribute) {
                     if (isset($data[$attribute])) {
                         $data[$locale->code][$attribute] = $data[$attribute];
-
                         $data[$locale->code]['locale_id'] = $locale->id;
                     }
                 }
@@ -52,6 +51,8 @@ class CategoryRepository extends Repository
         if (isset($data['attributes'])) {
             $category->filterableAttributes()->sync($data['attributes']);
         }
+
+        Event::dispatch('catalog.category.create.after', $category);
 
         return $category;
     }
@@ -68,6 +69,8 @@ class CategoryRepository extends Repository
     {
         $category = $this->find($id);
 
+        Event::dispatch('catalog.category.update.before', $id);
+
         $data = $this->setSameAttributeValueToAllLocale($data, 'slug');
 
         $category->update($data);
@@ -78,7 +81,24 @@ class CategoryRepository extends Repository
             $category->filterableAttributes()->sync($data['attributes']);
         }
 
+        Event::dispatch('catalog.category.update.after', $id);
+
         return $category;
+    }
+
+    /**
+     * Delete category.
+     *
+     * @param  int  $id
+     * @return void
+     */
+    public function delete($id)
+    {
+        Event::dispatch('catalog.category.delete.before', $id);
+
+        parent::delete($id);
+
+        Event::dispatch('catalog.category.delete.after', $id);
     }
 
     /**
@@ -151,7 +171,7 @@ class CategoryRepository extends Repository
             ->select(DB::raw(1))
             ->exists();
 
-        return ! $exists;
+        return $exists ? false : true;
     }
 
     /**
@@ -170,7 +190,7 @@ class CategoryRepository extends Repository
     }
 
     /**
-     * Retrieve category from slug.
+     * Retrive category from slug.
      *
      * @param string $slug
      * @return \Webkul\Category\Contracts\Category
@@ -214,7 +234,6 @@ class CategoryRepository extends Repository
 
             foreach ($data[$type] as $imageId => $image) {
                 $file = $type . '.' . $imageId;
-
                 $dir = 'category/' . $category->id;
 
                 if ($request->hasFile($file)) {
@@ -223,7 +242,6 @@ class CategoryRepository extends Repository
                     }
 
                     $category->{$type} = $request->file($file)->store($dir);
-
                     $category->save();
                 }
             }
@@ -233,7 +251,6 @@ class CategoryRepository extends Repository
             }
 
             $category->{$type} = null;
-            
             $category->save();
         }
     }
@@ -251,10 +268,7 @@ class CategoryRepository extends Repository
         $trimmed = [];
 
         foreach ($categories as $key => $category) {
-            if (
-                $category->name != null
-                || $category->name != ''
-            ) {
+            if ($category->name != null || $category->name != '') {
                 $trimmed[$key] = [
                     'id'   => $category->id,
                     'name' => $category->name,

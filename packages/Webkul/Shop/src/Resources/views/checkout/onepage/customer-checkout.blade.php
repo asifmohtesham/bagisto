@@ -10,10 +10,7 @@
             <a href="{{ route('customer.forgot-password.create') }}">{{ __('shop::app.customer.login-form.forgot_pass') }}</a>
 
             <div class="mt-10">
-                @if (
-                    Cookie::has('enable-resend')
-                    && Cookie::get('enable-resend') == true
-                )
+                @if (Cookie::has('enable-resend') && Cookie::get('enable-resend') == true)
                     <a href="{{ route('customer.resend.verification-email', Cookie::get('email-for-resend')) }}">{{ __('shop::app.customer.login-form.resend-verification') }}</a>
                 @endif
             </div>

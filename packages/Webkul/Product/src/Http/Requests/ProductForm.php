@@ -67,10 +67,7 @@ class ProductForm extends FormRequest
         ]);
 
         foreach ($product->getEditableAttributes() as $attribute) {
-            if (
-                in_array($attribute->code, ['sku', 'url_key'])
-                || $attribute->type == 'boolean'
-            ) {
+            if (in_array($attribute->code, ['sku', 'url_key']) || $attribute->type == 'boolean') {
                 continue;
             }
 
@@ -82,10 +79,7 @@ class ProductForm extends FormRequest
                 $validations = $this->rules[$attribute->code];
             }
 
-            if (
-                $attribute->type == 'text'
-                && $attribute->validation
-            ) {
+            if ($attribute->type == 'text' && $attribute->validation) {
                 array_push($validations,
                     $attribute->validation == 'decimal'
                         ? new Decimal

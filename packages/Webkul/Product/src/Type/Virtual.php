@@ -50,10 +50,8 @@ class Virtual extends AbstractType
             return false;
         }
 
-        if (
-            is_callable(config('products.isSaleable')) &&
-            call_user_func(config('products.isSaleable'), $this->product) === false
-        ) {
+        if (is_callable(config('products.isSaleable')) &&
+            call_user_func(config('products.isSaleable'), $this->product) === false) {
             return false;
         }
 
@@ -72,7 +70,7 @@ class Virtual extends AbstractType
      */
     public function haveSufficientQuantity(int $qty): bool
     {
-        return $qty <= $this->totalQuantity();
+        return $qty <= $this->totalQuantity() ? true : false;
     }
 
     /**
@@ -80,7 +78,7 @@ class Virtual extends AbstractType
      *
      * @return float
      */
-    public function getMaximumPrice()
+    public function getMaximamPrice()
     {
         return $this->product->price;
     }

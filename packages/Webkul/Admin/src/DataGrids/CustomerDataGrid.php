@@ -145,13 +145,13 @@ class CustomerDataGrid extends DataGrid
             'closure'    => function ($row) {
                 $html = '';
 
-                if ($row->status) {
+                if ($row->status == 1) {
                     $html .= '<span class="badge badge-md badge-success">' . trans('admin::app.customers.customers.active') . '</span>';
                 } else {
                     $html .= '<span class="badge badge-md badge-danger">' . trans('admin::app.customers.customers.inactive') . '</span>';
                 }
 
-                if ($row->is_suspended) {
+                if ($row->is_suspended == 1) {
                     $html .= '<span class="badge badge-md badge-danger">' . trans('admin::app.customers.customers.suspended') . '</span>';
                 }
 

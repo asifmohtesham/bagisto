@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Log;
 use Webkul\Checkout\Contracts\Cart as CartModel;
 use Webkul\Customer\Repositories\WishlistRepository;
 use Webkul\Product\Repositories\ProductRepository;
-use Webkul\CartRule\Repositories\CartRuleCouponRepository;
 
 class CartController extends Controller
 {
@@ -17,13 +16,11 @@ class CartController extends Controller
      *
      * @param  \Webkul\Customer\Repositories\CartItemRepository  $wishlistRepository
      * @param  \Webkul\Product\Repositories\ProductRepository  $productRepository
-     * @param  \Webkul\CartRule\Repositories\CartRuleCouponRepository  $cartRuleCouponRepository
      * @return void
      */
     public function __construct(
         protected WishlistRepository $wishlistRepository,
-        protected ProductRepository $productRepository,
-        protected CartRuleCouponRepository $cartRuleCouponRepository
+        protected ProductRepository $productRepository
     )
     {
         $this->middleware('throttle:5,1')->only('applyCoupon');
@@ -62,31 +59,27 @@ class CartController extends Controller
                 return redirect()->back();
             }
 
-            session()->flash('success', __('shop::app.checkout.cart.item.success'));
+            if ($result instanceof CartModel) {
+                session()->flash('success', __('shop::app.checkout.cart.item.success'));
 
-            if ($customer = auth()->guard('customer')->user()) {
-                $this->wishlistRepository->deleteWhere([
-                    'product_id'  => $id,
-                    'customer_id' => $customer->id,
-                ]);
-            }
+                if ($customer = auth()->guard('customer')->user()) {
+                    $this->wishlistRepository->deleteWhere(['product_id' => $id, 'customer_id' => $customer->id]);
+                }
 
-            if (request()->get('is_buy_now')) {
-                Event::dispatch('shop.item.buy-now', $id);
+                if (request()->get('is_buy_now')) {
+                    Event::dispatch('shop.item.buy-now', $id);
 
-                return redirect()->route('shop.checkout.onepage.index');
+                    return redirect()->route('shop.checkout.onepage.index');
+                }
             }
         } catch (\Exception $e) {
             session()->flash('warning', __($e->getMessage()));
 
-            $product = $this->productRepository->findOrFail($id);
+            $product = $this->productRepository->find($id);
 
             Log::error(
                 'Shop CartController: ' . $e->getMessage(),
-                [
-                    'product_id' => $id,
-                    'cart_id'    => cart()->getCart() ?? 0
-                ]
+                ['product_id' => $id, 'cart_id' => cart()->getCart() ?? 0]
             );
 
             return redirect()->route('shop.productOrCategory.index', $product->url_key);
@@ -164,7 +157,7 @@ class CartController extends Controller
             session()->flash('warning', trans('shop::app.checkout.cart.move-to-wishlist-error'));
         }
 
-        return request()->get('redirect')
+        return request()->get('redirect') !== false
             ? redirect()->back()
             : response()->json([]);
     }
@@ -180,27 +173,16 @@ class CartController extends Controller
 
         try {
             if (strlen($couponCode)) {
-                $coupon = $this->cartRuleCouponRepository->findOneByField('code', $couponCode);
+                Cart::setCouponCode($couponCode)->collectTotals();
 
-                if ($coupon->cart_rule->status) {
-                    if (Cart::getCart()->coupon_code == $couponCode) {
-                        return response()->json([
-                            'success' => false,
-                            'message' => trans('shop::app.checkout.total.coupon-already-applied'),
-                        ]);
-                    }
-    
-                    Cart::setCouponCode($couponCode)->collectTotals();
-                  
-                    if (Cart::getCart()->coupon_code == $couponCode) {
-                        return response()->json([
-                            'success' => true,
-                            'message' => trans('shop::app.checkout.total.success-coupon'),
-                        ]);
-                    }
+                if (Cart::getCart()->coupon_code == $couponCode) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => trans('shop::app.checkout.total.success-coupon'),
+                    ]);
                 }
             }
-           
+
             return response()->json([
                 'success' => false,
                 'message' => trans('shop::app.checkout.total.invalid-coupon'),
@@ -239,18 +221,16 @@ class CartController extends Controller
      */
     private function onFailureAddingToCart($result): bool
     {
-        if (! is_array($result)) {
-            return false;
-        }
-
-        if (isset($result['warning'])) {
+        if (is_array($result) && isset($result['warning'])) {
             session()->flash('warning', $result['warning']);
-        } elseif (isset($result['info'])) {
-            session()->flash('info', $result['info']);
-        } else {
-            return false;
+            return true;
         }
 
-        return true;
+        if (is_array($result) && isset($result['info'])) {
+            session()->flash('info', $result['info']);
+            return true;
+        }
+
+        return false;
     }
 }

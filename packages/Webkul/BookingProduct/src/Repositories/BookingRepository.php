@@ -2,6 +2,7 @@
 
 namespace Webkul\BookingProduct\Repositories;
 
+use Illuminate\Container\Container as App;
 use Illuminate\Support\Facades\Event;
 use Carbon\Carbon;
 use Webkul\Core\Eloquent\Repository;
@@ -11,9 +12,9 @@ class BookingRepository extends Repository
     /**
      * Specify Model class name
      *
-     * @return string
+     * @return mixed
      */
-    function model(): string
+    function model()
     {
         return 'Webkul\BookingProduct\Contracts\Booking';
     }
@@ -36,10 +37,7 @@ class BookingRepository extends Repository
             $from = $to = null;
 
             if (isset($item->additional['booking']['slot'])) {
-                if (
-                    isset($item->additional['booking']['slot']['from'])
-                    && isset($item->additional['booking']['slot']['to'])
-                ) {
+                if (isset($item->additional['booking']['slot']['from']) && isset($item->additional['booking']['slot']['to'])) {
                     $from = $item->additional['booking']['slot']['from'];
 
                     $to = $item->additional['booking']['slot']['to'];
@@ -50,10 +48,7 @@ class BookingRepository extends Repository
 
                     $to = end($timestamps);
                 }
-            } elseif (
-                isset($item->additional['booking']['date_from'])
-                && isset($item->additional['booking']['date_to'])
-            ) {
+            } elseif (isset($item->additional['booking']['date_from']) && isset($item->additional['booking']['date_to'])) {
                 $from = Carbon::createFromTimeString($item->additional['booking']['date_from'] . ' 00:00:00')->getTimestamp();
 
                 $to = Carbon::createFromTimeString($item->additional['booking']['date_to'] . ' 23:59:59')->getTimestamp();

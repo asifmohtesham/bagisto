@@ -111,7 +111,7 @@ class CartRule extends Model implements CartRuleContract
     public function coupon_code(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->cart_rule_coupon()
-            ->where('is_primary', 1);
+                    ->where('is_primary', 1);
     }
 
     /**
@@ -121,9 +121,10 @@ class CartRule extends Model implements CartRuleContract
      */
     public function getCouponCodeAttribute()
     {
-        $coupon = $this->coupon_code()->first();
+        $coupon = $this->coupon_code()
+                       ->first();
 
-        if (! $coupon) {
+        if (!$coupon) {
             return;
         }
 

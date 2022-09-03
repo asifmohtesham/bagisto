@@ -45,9 +45,7 @@
             <div class="filter-advance">
                 <datagrid-filter-tags
                     :filters="filters"
-                    :translations="translations"
                     @onRemoveFilter="removeFilter($event)"
-                    @onRemoveAllFilter="clearAllFilters()"
                 ></datagrid-filter-tags>
 
                 <div class="records-count-container">
@@ -103,12 +101,12 @@ export default {
         DatagridPagination,
         DatagridTable,
         DatagridExtraFilters,
-        DatagridFilterTags,
+        DatagridFilterTags
     },
 
     mixins: [PersistDatagridAttributes],
 
-    data: function () {
+    data: function() {
         return {
             dataGridIndex: 0,
             currentSort: null,
@@ -116,11 +114,11 @@ export default {
             id: btoa(this.src),
             isDataLoaded: false,
             massActionTargets: [],
-            url: this.src,
+            url: this.src
         };
     },
 
-    mounted: function () {
+    mounted: function() {
         this.makeURL();
     },
 
@@ -163,20 +161,9 @@ export default {
 
             axios
                 .get(this.url)
-                .then(function (response) {
+                .then(function(response) {
                     if (response.status === 200) {
                         let results = response.data;
-
-                        if (
-                            ! results.records.data.length &&
-                            results.records.prev_page_url
-                        ) {
-                            self.url = results.records.prev_page_url;
-
-                            self.refresh();
-
-                            return;
-                        }
 
                         self.initResponseProps(results);
 
@@ -185,7 +172,7 @@ export default {
                         self.dataGridIndex += 1;
                     }
                 })
-                .catch(function (error) {
+                .catch(function(error) {
                     console.log(error);
                 });
         },
@@ -208,7 +195,7 @@ export default {
                     id: parseInt(id),
                     type: this.massActions[id].type,
                     action: this.massActions[id].action,
-                    confirm_text: this.massActions[id].confirm_text,
+                    confirm_text: this.massActions[id].confirm_text
                 });
             }
         },
@@ -226,7 +213,7 @@ export default {
             this.perPage = this.itemsPerPage;
         },
 
-        formURL(column, condition, response, label, type) {
+        formURL(column, condition, response, label) {
             let obj = {};
 
             if (
@@ -273,7 +260,6 @@ export default {
                     }
 
                     if (filterRepeated === false) {
-                        obj.type = type;
                         obj.column = column;
                         obj.cond = condition;
                         obj.val = response;
@@ -373,7 +359,6 @@ export default {
                     }
                 }
             } else {
-                obj.type = type;
                 obj.column = column;
                 obj.cond = condition;
                 obj.val = encodeURIComponent(response);
@@ -406,14 +391,13 @@ export default {
         },
 
         searchData($event) {
-            const searchValue = $event.data.searchValue.trim();
+            const searchValue = $event.data.searchValue;
 
             this.formURL(
                 'search',
                 'all',
                 searchValue,
-                this.translations.searchTitle,
-                'search'
+                this.translations.searchTitle
             );
         },
 
@@ -429,16 +413,16 @@ export default {
             this.filters.push({
                 column: 'perPage',
                 cond: 'eq',
-                val: currentPerPageSelection,
+                val: currentPerPageSelection
             });
 
             this.makeURL();
         },
 
         filterData($event) {
-            const { type, column, condition, response, label } = $event.data;
+            const { column, condition, response, label } = $event.data;
 
-            this.formURL(column, condition, response, label, type);
+            this.formURL(column, condition, response, label);
         },
 
         removeFilter($event) {
@@ -455,12 +439,6 @@ export default {
                     this.makeURL();
                 }
             }
-        },
-        
-        clearAllFilters() {
-            this.filters = [];
-
-            this.makeURL();
         },
 
         changePage($event) {

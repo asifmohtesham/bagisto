@@ -590,7 +590,7 @@ body::after {
 }
 
 .cd-quick-view {
-    top: 30px;
+    top: 100px;
     width: 700px;
     z-index: 101;
     padding: 40px;
@@ -639,10 +639,6 @@ body::after {
     .product-actions {
         display: inline-block;
 
-        form {
-            float: right;
-        }
-        
         .compare-icon,
         .wishlist-icon {
             height: 38px;

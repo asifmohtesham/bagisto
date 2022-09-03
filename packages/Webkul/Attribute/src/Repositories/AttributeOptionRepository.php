@@ -10,9 +10,9 @@ class AttributeOptionRepository extends Repository
     /**
      * Specify Model class name
      *
-     * @return string
+     * @return mixed
      */
-    function model(): string
+    function model()
     {
         return 'Webkul\Attribute\Contracts\AttributeOption';
     }
@@ -52,10 +52,7 @@ class AttributeOptionRepository extends Repository
      */
     public function uploadSwatchImage($data, $optionId)
     {
-        if (
-            ! isset($data['swatch_value'])
-            || ! $data['swatch_value']
-        ) {
+        if (! isset($data['swatch_value']) || ! $data['swatch_value']) {
             return;
         }
 

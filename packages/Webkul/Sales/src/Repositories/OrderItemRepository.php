@@ -13,9 +13,9 @@ class OrderItemRepository extends Repository
      *
      * @return string
      */
-    public function model(): string
+    public function model()
     {
-        return 'Webkul\Sales\Contracts\OrderItem';
+        return OrderItem::class;
     }
 
     /**
@@ -26,10 +26,7 @@ class OrderItemRepository extends Repository
      */
     public function create(array $data)
     {
-        if (
-            isset($data['product'])
-            && $data['product']
-        ) {
+        if (isset($data['product']) && $data['product']) {
             $data['product_id'] = $data['product']->id;
             $data['product_type'] = get_class($data['product']);
 
@@ -124,6 +121,7 @@ class OrderItemRepository extends Repository
             }
 
             if ($item->product->inventories->count() > 0) {
+
                 $orderedInventory = $item->product->ordered_inventories()
                     ->where('channel_id', $orderItem->order->channel_id)
                     ->first();
@@ -132,7 +130,6 @@ class OrderItemRepository extends Repository
                     $qty = $item->qty_ordered;
                 } else {
                     Log::info('OrderItem has no `qty_ordered`.', ['orderItem' => $item, 'product' => $item->product]);
-
                     if (isset($item->parent->qty_ordered)) {
                         $qty = $item->parent->qty_ordered;
                     } else {
@@ -141,7 +138,6 @@ class OrderItemRepository extends Repository
                             'parent'    => $item->parent,
                             'product'   => $item->product,
                         ]);
-                        
                         $qty = 1;
                     }
                 }

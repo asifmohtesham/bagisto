@@ -2,7 +2,6 @@
 
 namespace Webkul\Admin\Http\Controllers\Customer;
 
-use Illuminate\Support\Facades\Event;
 use Webkul\Admin\DataGrids\CustomerGroupDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Customer\Repositories\CustomerGroupRepository;
@@ -63,13 +62,11 @@ class CustomerGroupController extends Controller
             'name' => 'required',
         ]);
 
-        Event::dispatch('customer.customer_group.create.before');
+        $data = request()->all();
 
-        $customerGroup = $this->customerGroupRepository->create(array_merge(request()->all() , [
-            'is_user_defined' => 1,
-        ]));
+        $data['is_user_defined'] = 1;
 
-        Event::dispatch('customer.customer_group.create.after', $customerGroup);
+        $this->customerGroupRepository->create($data);
 
         session()->flash('success', trans('admin::app.response.create-success', ['name' => 'Customer Group']));
 
@@ -102,11 +99,7 @@ class CustomerGroupController extends Controller
             'name' => 'required',
         ]);
 
-        Event::dispatch('customer.customer_group.update.before', $id);
-
-        $customerGroup = $this->customerGroupRepository->update(request()->all(), $id);
-
-        Event::dispatch('customer.customer_group.update.after', $customerGroup);
+        $this->customerGroupRepository->update(request()->all(), $id);
 
         session()->flash('success', trans('admin::app.response.update-success', ['name' => 'Customer Group']));
 
@@ -123,24 +116,20 @@ class CustomerGroupController extends Controller
     {
         $customerGroup = $this->customerGroupRepository->findOrFail($id);
 
-        if (! $customerGroup->is_user_defined) {
+        if ($customerGroup->is_user_defined == 0) {
             return response()->json([
                 'message' => trans('admin::app.customers.customers.group-default'),
             ], 400);
         }
 
-        if ($customerGroup->customers->count()) {
+        if (count($customerGroup->customers) > 0) {
             return response()->json([
                 'message' => trans('admin::app.response.customer-associate', ['name' => 'Customer Group']),
             ], 400);
         }
 
         try {
-            Event::dispatch('customer.customer_group.delete.before', $id);
-
             $this->customerGroupRepository->delete($id);
-
-            Event::dispatch('customer.customer_group.delete.after', $id);
 
             return response()->json(['message' => trans('admin::app.response.delete-success', ['name' => 'Customer Group'])]);
         } catch (\Exception $e) {}

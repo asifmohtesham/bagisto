@@ -63,10 +63,7 @@
 
                         @include ('shop::products.price', ['product' => $product])
 
-                        @if (
-                            Webkul\Tax\Helpers\Tax::isTaxInclusive()
-                            && $product->getTypeInstance()->getTaxCategory()
-                        )
+                        @if (Webkul\Tax\Helpers\Tax::isTaxInclusive() && $product->getTypeInstance()->getTaxCategory())
                             <div>
                                 {{ __('shop::app.products.tax-inclusive') }}
                             </div>
@@ -158,7 +155,6 @@
     <script type="text/x-template" id="quantity-changer-template">
         <div class="quantity control-group" :class="[errors.has(controlName) ? 'has-error' : '']">
             <label class="required">{{ __('shop::app.products.quantity') }}</label>
-
             <span class="quantity-container">
                 <button type="button" class="decrease" @click="decreaseQty()">-</button>
 
@@ -172,9 +168,9 @@
                     @keyup="setQty($event)">
 
                 <button type="button" class="increase" @click="increaseQty()">+</button>
-            </span>
 
-            <span class="control-error" v-if="errors.has(controlName)">@{{ errors.first(controlName) }}</span>
+                <span class="control-error" v-if="errors.has(controlName)">@{{ errors.first(controlName) }}</span>
+            </span>
         </div>
     </script>
 
@@ -279,6 +275,12 @@
                     this.qty = parseInt(this.qty) + 1;
                 }
             }
+        });
+
+        $(document).ready(function() {
+            var addTOButton = document.getElementsByClassName('add-to-buttons')[0];
+            document.getElementById('loader').style.display="none";
+            addTOButton.style.display="flex";
         });
 
         window.onload = function() {

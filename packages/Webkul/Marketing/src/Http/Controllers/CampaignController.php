@@ -2,7 +2,6 @@
 
 namespace Webkul\Marketing\Http\Controllers;
 
-use Illuminate\Support\Facades\Event;
 use Webkul\Admin\DataGrids\CampaignDataGrid;
 use Webkul\Marketing\Repositories\CampaignRepository;
 
@@ -65,11 +64,7 @@ class CampaignController extends Controller
             'marketing_event_id'    => 'required_if:schedule_type,event',
         ]);
 
-        Event::dispatch('marketing.campaigns.create.before');
-
-        $campaign = $this->campaignRepository->create(request()->all());
-
-        Event::dispatch('marketing.campaigns.create.after', $campaign);
+        $this->campaignRepository->create(request()->all());
 
         session()->flash('success', trans('admin::app.marketing.campaigns.create-success'));
 
@@ -105,11 +100,7 @@ class CampaignController extends Controller
             'marketing_event_id'    => 'required_if:schedule_type,event',
         ]);
 
-        Event::dispatch('marketing.campaigns.update.before', $id);
-
-        $campaign = $this->campaignRepository->update(request()->all(), $id);
-
-        Event::dispatch('marketing.campaigns.update.after', $campaign);
+        $this->campaignRepository->update(request()->all(), $id);
 
         session()->flash('success', trans('admin::app.marketing.campaigns.update-success'));
 
@@ -127,11 +118,7 @@ class CampaignController extends Controller
         $this->campaignRepository->findOrFail($id);
 
         try {
-            Event::dispatch('marketing.campaigns.delete.before', $id);
-
             $this->campaignRepository->delete($id);
-
-            Event::dispatch('marketing.campaigns.delete.after', $id);
 
             return response()->json(['message' => trans('admin::app.marketing.campaigns.delete-success')]);
         } catch (\Exception $e) {}

@@ -128,10 +128,6 @@
     margin-top: 90px;
 }
 
-.m-20 {
-    margin: 20px;
-}
-
 body {
     letter-spacing: -0.26px;
     line-height: 19px;
@@ -744,12 +740,6 @@ h5 {
     }
 }
 
-.boolean {
-    label {
-        pointer-events: none;
-    }
-}
-
 .control-group {
     display: block;
     margin-bottom: 25px;
@@ -762,7 +752,7 @@ h5 {
     label {
         display: block;
         color: $font-color;
-        
+
         &.required::after {
             content: '*';
             color: $danger-color;
@@ -1004,7 +994,6 @@ h5 {
         height: 34px;
         margin-top: 10px;
         margin-bottom: 5px;
-        pointer-events: auto;
     }
 
     .switch input {
@@ -1185,7 +1174,7 @@ accordian {
 
     &.error {
         .accordian-header {
-            color: #ff5656 !important;
+            color: #ff5656;
         }
     }
 
@@ -1437,7 +1426,7 @@ modal {
     margin-bottom: 20px;
     margin-top: 10px;
     display: inline-block;
-    width: 200px;
+    width: 100%;
 
     .image-item {
         width: 200px;

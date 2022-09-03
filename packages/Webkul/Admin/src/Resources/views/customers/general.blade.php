@@ -168,7 +168,7 @@
                     @endif
 
                     <select class="control" id="customerGroup" name="customer_group_id">
-                        @foreach ($groups as $group)
+                        @foreach ($customerGroup as $group)
                             <option value="{{ $group->id }}" {{ $selectedCustomerOption == $group->id ? 'selected' : '' }}>
                                 {{ $group->name}}
                             </option>

@@ -377,8 +377,6 @@ return [
                 'wishlist-sharing'     => 'Wishlist Sharing',
                 'shared-link'          => 'Shared Link',
                 'copy'                 => 'Copy',
-                'copy-link'            => 'Copy Link',
-                'copied'               => 'Copied!',
                 'visibility'           => 'Visibility',
                 'public'               => 'Public',
                 'private'              => 'Private',
@@ -538,12 +536,10 @@ return [
             ],
             'minimum-order-message'     => 'Minimum order amount is :amount',
             'suspended-account-message' => 'Your account has been suspended.',
-            'inactive-account-message' =>  'Your account has been inactive.',
             'check-shipping-address'    => 'Please check shipping address.',
             'check-billing-address'     => 'Please check billing address.',
             'specify-shipping-method'   => 'Please specify shipping method.',
             'specify-payment-method'    => 'Please specify payment method.',
-            'rule-applied'              => 'Cart rule applied',
         ],
 
         'onepage' => [
@@ -573,13 +569,6 @@ return [
             'shipping-method'     => 'Select Shipping Method',
             'payment-methods'     => 'Select Payment Method',
             'payment-method'      => 'Payment Method',
-            'payment-method-name' => [
-                'PayPal Smart Button' => 'PayPal Smart Button',
-                'PayPal'              => 'PayPal',
-                'Cash On Delivery'    => 'Cash On Delivery',                
-                'Money Transfer'      => 'Money Transfer',                
-                'Paypal Standard'     => 'PayPal Standard'    
-            ],
             'summary'             => 'Order Summary',
             'price'               => 'Price',
             'quantity'            => 'Quantity',
@@ -623,7 +612,6 @@ return [
             'invalid-coupon'      => 'Coupon code is invalid.',
             'success-coupon'      => 'Coupon code applied successfully.',
             'coupon-apply-issue'  => 'Coupon code can\'t be applied.',
-            'coupon-already-applied' => 'Coupon code already applied.',
         ],
 
         'success' => [
